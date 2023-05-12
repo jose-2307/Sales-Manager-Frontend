@@ -1,0 +1,54 @@
+h1 {
+    text-align: center;
+}
+
+.container-all {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    /* background-color: #eee; */
+}
+
+.center {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 65%;
+}
+  
+.container-category {
+    width: 250px;
+    flex: 0 0 calc(33.33% - 20px); /* El 33.33% asegura 3 columnas y los 20px son los márgenes */
+    transition: box-shadow 0.2s ease;
+    margin: 20px 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: #faf9f9;
+}
+
+img { 
+    width: 100%;
+    height: auto;
+    border-radius: 5px 5px 0 0; /*arriba-izquierda arriba-derecha abajo-derecha abajo-izquierda*/
+}
+
+h3 {
+    margin: 10px 15px;
+    text-align: center;
+}
+
+.link {
+    text-decoration: none;
+    color: inherit;
+}
+
+h2 {
+    text-align: center;
+}
+
+
+
+
+

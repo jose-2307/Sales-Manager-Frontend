@@ -1,13 +1,17 @@
-import { useSelector } from "react-redux";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from "./components/Navbar";
+import Categories from "./components/Categories";
 
 const App = () => {
-  const products = useSelector(state => state.products);
-  const categories = useSelector(state => state.categories);
-
-
-  console.log({products, categories})
   return(
-    <div>Hello world</div>
+    <>
+    <BrowserRouter>
+      <Navbar />
+        <Routes>
+          <Route path='/' element={<Categories />}/>
+        </Routes>
+    </BrowserRouter>
+    </>
   )
 } 
 
