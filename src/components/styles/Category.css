@@ -4,9 +4,9 @@ h1 {
 
 .container-all {
     display: flex;
+    background-color: #eee;
     justify-content: center;
     padding: 20px;
-    /* background-color: #eee; */
 }
 
 .center {
@@ -25,13 +25,13 @@ h1 {
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
-    background-color: #faf9f9;
 }
 
 img { 
     width: 100%;
-    height: auto;
+    height: 90%;
     border-radius: 5px 5px 0 0; /*arriba-izquierda arriba-derecha abajo-derecha abajo-izquierda*/
+    object-fit: cover;
 }
 
 h3 {
