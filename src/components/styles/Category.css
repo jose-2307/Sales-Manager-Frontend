@@ -31,7 +31,7 @@ img {
     width: 100%;
     height: 90%;
     border-radius: 5px 5px 0 0; /*arriba-izquierda arriba-derecha abajo-derecha abajo-izquierda*/
-    object-fit: cover;
+    object-fit: cover; /*Para que ocupe todo el espacio disponible*/
 }
 
 h3 {

@@ -1,15 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = [
-    {
-        name: "almendras",
-        price: "2000"
-    },
-    {
-        name: "nueces",
-        price: "1000"
-    }
-]
+const initialState = [];
 
 export const productSlice = createSlice({ //obtiene el estado de las tareas
     name: "products",

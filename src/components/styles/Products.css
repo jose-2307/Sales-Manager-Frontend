@@ -1,0 +1,37 @@
+.container-products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 65%;
+    align-items: center;
+    flex-direction: column;
+}
+
+.container-product {
+    width: 420px;
+    height: 150px;
+    display: flex; /*El 33.33% asegura 3 columnas y los 20px son los márgenes*/
+    align-items: center;
+    transition: box-shadow 0.2s ease;
+    margin: 20px 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.img-product {
+    width: 40%;
+    height: inherit;
+    border-radius: 5px; /*arriba-izquierda arriba-derecha abajo-derecha abajo-izquierda*/
+}
+
+.product-info {
+    padding-left: 7%;
+}
+
+.product-title {
+    margin: auto;
+    text-align: left;
+}

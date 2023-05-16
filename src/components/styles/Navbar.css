@@ -1,10 +1,8 @@
 nav {
-    /* border-bottom: 1px solid #a1a1a1dc; */
     display: flex;
     flex-direction: row;
     align-items: center; /*Lo centra en el eje vertical por tener flex-direction: row*/
     height: 60px;
-    /* justify-content: space-between; */
     padding: 0 50px;
     box-shadow: 0 2px 3px rgb(0,0,0,0.1);
 }
@@ -15,5 +13,5 @@ ul {
     justify-content: space-between;
     padding: 0;
     list-style: none;
-    gap: 5px;
+    gap: 5px; /*Para establecer el espacio entre los elementos*/
 }
