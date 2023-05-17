@@ -11,6 +11,8 @@ const categoryId = 1;
 const Products = () => {
     const products = useSelector(state => state.products);
     const dispatch = useDispatch();
+    const [editProduct, setEditProduct] = useState(null);
+    // const [messageVisible, setMessageVisible] = useState(false);
 
     useEffect(() => {
         if (products.length === 0) {
@@ -29,6 +31,10 @@ const Products = () => {
     }, [dispatch, products]);
     console.log({products})
     
+    const handleModal = (productId) => {
+        setEditProduct(productId);
+    }
+
     return (
         <section>
             <h1>Mis productos</h1>
@@ -49,7 +55,26 @@ const Products = () => {
                                         : <p>Stock: <b>{`${p.weight} g`}</b></p>
                                     } 
                                     <p>{`Precio por kilo: $ ${p.salePriceKilo}`}</p>
-                                </section>      
+                                </section>    
+                                <section className="manage-product">
+                                    <div className="icons-center">
+                                        <button className="edit-button" onClick={() => handleModal(p.id)}><img src={"../../icons/escribir.png"} /></button>
+                                        {editProduct === p.id && (
+                                            <div className="edit-modal">
+                                                <div className="modal-content">
+                                                    <span className="close" onClick={() => handleModal(null)}>
+                                                    &times;
+                                                    </span>
+                                                    <form>
+                                                        <input label={"Precio"} />
+                                                        <input label={"Precio"} />
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <button className="delete-button" ><img src={"../../icons/borrar.png"} /></button>    
+                                    </div>
+                                </section> 
                             </div>
                         )
                     }

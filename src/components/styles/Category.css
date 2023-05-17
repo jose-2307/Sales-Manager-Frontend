@@ -18,13 +18,22 @@ h1 {
   
 .container-category {
     width: 250px;
-    flex: 0 0 calc(33.33% - 20px); /* El 33.33% asegura 3 columnas y los 20px son los márgenes */
+    flex: 0 0 calc(33.33% - 22px); /* El 33.33% asegura 3 columnas y los 20px son los márgenes */
     transition: box-shadow 0.2s ease;
     margin: 20px 10px;
     background-color: #fff;
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.container-category:hover {
+    background-color: #919092;
+    color: #fff
+}
+
+.container-category:active {
+    border: 3px solid #5b5a5c;
 }
 
 img { 
