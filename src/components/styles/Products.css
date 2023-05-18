@@ -51,20 +51,20 @@
     flex-direction: row;
 }
 
-.edit-button, .delete-button {
+.edit-button, .add-button, .delete-button {
     height: 100%;
     width: 38%;
     background-color: #fff;
     border: none;
 }
 
-.edit-button img, .delete-button img {
+.edit-button img, .delete-button img, .add-button img {
     width: 50%;
     height: inherit;
     cursor: pointer;
 }
 
-.edit-button img:hover, .delete-button img:hover {
+.edit-button img:hover, .add-button img:hover, .delete-button img:hover {
     opacity: 0.5;
 }
 

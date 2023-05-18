@@ -1,40 +1,58 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addProduct } from "../features/products/productSlice";
+import { addProduct, deleteProduct } from "../features/products/productSlice";
 import { getProducts } from "../services/products.service";
 import "./styles/Products.css"
+import { useParams } from "react-router-dom";
 
 
-const userId = 2;
-const categoryId = 1;
+const userId = 1;
+
+// const validate = (values) => {
+//     const errors = {};
+// }
 
 const Products = () => {
     const products = useSelector(state => state.products);
     const dispatch = useDispatch();
     const [editProduct, setEditProduct] = useState(null);
+    const { id = "" } = useParams();
     // const [messageVisible, setMessageVisible] = useState(false);
 
+    //Se utiliza para eliminar la data asociada a un producto cuando se cambia de categoría
     useEffect(() => {
-        if (products.length === 0) {
-            const fetchProducts = async () => {
-                try {
-                    const data = await getProducts(userId,categoryId);
-                    data.forEach(x => {
-                        dispatch(addProduct(x));
-                    });
-                } catch (error) {
-                    console.log(error.message);
-                }
+        // if (products[0] != undefined && id == products[0].id) {console.log("Repetido")}
+        dispatch(deleteProduct());
+    }, []);
+
+
+    useEffect(() => {
+        if (id === "") return
+        const fetchProducts = async () => {
+            try {
+                const data = await getProducts(userId,id);
+                // dispatch(addProduct({data, id}));
+                data.forEach(x => {
+                    dispatch(addProduct(x));
+                });
+            } catch (error) {
+                console.log(error.message);
             }
-            fetchProducts();
         }
-    }, [dispatch, products]);
-    console.log({products})
+        fetchProducts();
+    }, [dispatch, id]);
     
+
+    // if (products[0] != undefined && "id" in products[0]) {
+    //     console.log(products[0].id)
+    //     products = products[0].data
+    // }
+    
+
     const handleModal = (productId) => {
         setEditProduct(productId);
     }
-
+    if (!products) return <></>
     return (
         <section>
             <h1>Mis productos</h1>
@@ -67,11 +85,12 @@ const Products = () => {
                                                     </span>
                                                     <form>
                                                         <input label={"Precio"} />
-                                                        <input label={"Precio"} />
+                                                        <input type="" label={"Precio"} />
                                                     </form>
                                                 </div>
                                             </div>
                                         )}
+                                        <button className="add-button" ><img src={"../../icons/agregar.png"} /></button>    
                                         <button className="delete-button" ><img src={"../../icons/borrar.png"} /></button>    
                                     </div>
                                 </section> 
@@ -83,35 +102,5 @@ const Products = () => {
         </section>
     )
 }
-
-
-
-// const Products = () => {
-//     const [image, setImage] = useState("");
-
-//     const submitImage = () => {
-//         const data = new FormData();
-//         data.append("file", image);
-//         data.append("upload_preset","Sales_Manager");
-//         data.append("cloud_name","dmevmh3ch");
-
-//         fetch("https://api.cloudinary.com/v1_1/dmevmh3ch/image/upload", {
-//             method: "post",
-//             body: data
-//         })
-//         .then((res) => res.json())
-//         .then((data) => {
-//             console.log(data)
-//         }).catch((err) => {
-//             console.log(err)
-//         })
-//     }
-//     return (
-//         <div>
-//             <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-//             <button onClick={submitImage}>upload</button>
-//         </div>
-//     )
-// }
 
 export default Products

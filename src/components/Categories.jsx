@@ -33,9 +33,9 @@ const Categories = () => {
                 <div className="center">
                         {categories.map(c => 
                             <div className="container-category" key={c.id}>
-                                <Link to={`/products/${c.id}`} className="link">
+                                <Link to={`/categories/${c.id}`} className="link">
                                     <h3>{c.name}</h3>
-                                    <img alt={c.name} src={c.url} width="50%" height="32%" />
+                                    <img alt={c.name} src={c.image} width="50%" height="32%" />
                                 </Link>
                             </div>
                         )}

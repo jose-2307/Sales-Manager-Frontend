@@ -8,3 +8,4 @@ export const getCategories = async () => {
         throw new Error("Error obtiendo categorías")
     }
 }
+
