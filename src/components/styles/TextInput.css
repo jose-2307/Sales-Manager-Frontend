@@ -1,0 +1,10 @@
+.label {
+    
+}
+
+/*Para quitar la opción por defecto de aumentar y disminuir el valor*/
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

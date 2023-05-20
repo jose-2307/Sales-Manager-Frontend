@@ -1,33 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addProduct, deleteProduct } from "../features/products/productSlice";
+import { addProduct, deleteProducts, deleteProduct } from "../features/products/productSlice";
 import { getProducts } from "../services/products.service";
 import "./styles/Products.css"
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+
 
 
 const userId = 1;
 
-// const validate = (values) => {
-//     const errors = {};
-// }
 
 const Products = () => {
     const products = useSelector(state => state.products);
+    console.log(products)
+
     const dispatch = useDispatch();
-    const [editProduct, setEditProduct] = useState(null);
+    // const [editProduct, setEditProduct] = useState(null);
     const { id = "" } = useParams();
+    // const navigate = useNavigate(); //Para navegar a una url específica
+
     // const [messageVisible, setMessageVisible] = useState(false);
+    
 
     //Se utiliza para eliminar la data asociada a un producto cuando se cambia de categoría
     useEffect(() => {
         // if (products[0] != undefined && id == products[0].id) {console.log("Repetido")}
-        dispatch(deleteProduct());
+        dispatch(deleteProducts());
     }, []);
 
-
     useEffect(() => {
-        if (id === "") return
+        if (id === "") return 
         const fetchProducts = async () => {
             try {
                 const data = await getProducts(userId,id);
@@ -39,7 +41,8 @@ const Products = () => {
                 console.log(error.message);
             }
         }
-        fetchProducts();
+        fetchProducts();       
+        
     }, [dispatch, id]);
     
 
@@ -49,9 +52,9 @@ const Products = () => {
     // }
     
 
-    const handleModal = (productId) => {
-        setEditProduct(productId);
-    }
+    // const handleModal = (productId) => {
+    //     setEditProduct(productId);
+    // }
     if (!products) return <></>
     return (
         <section>
@@ -76,22 +79,62 @@ const Products = () => {
                                 </section>    
                                 <section className="manage-product">
                                     <div className="icons-center">
-                                        <button className="edit-button" onClick={() => handleModal(p.id)}><img src={"../../icons/escribir.png"} /></button>
-                                        {editProduct === p.id && (
+
+                                        <Link className="edit-button" to={`/categories/${id}/edit-product/${p.id}`}><img src={"../../icons/escribir.png"} /></Link>
+                                        <Link className="add-button" to={`/categories/${id}/create-product`}><img src={"../../icons/agregar.png"} /></Link>    
+                                        <button className="delete-button" ><img src={"../../icons/borrar.png"} /></button>  
+
+                                        {/* <button className="edit-button" onClick={() => handleModal(p.id)}><img src={"../../icons/escribir.png"} /></button> */}
+                                        {/* {editProduct === p.id && (
                                             <div className="edit-modal">
                                                 <div className="modal-content">
                                                     <span className="close" onClick={() => handleModal(null)}>
                                                     &times;
                                                     </span>
-                                                    <form>
-                                                        <input label={"Precio"} />
-                                                        <input type="" label={"Precio"} />
-                                                    </form>
+                                                    <Formik 
+                                                        initialValues={{salePriceKilo: "", file:""}} 
+                                                        validate={validate} 
+                                                        onSubmit={ 
+                                                            async (values) => {
+                                                                const data = new FormData();
+                                                                let imgs = [];
+                                                                if (values.file) {
+                                                                    const img = await submitImage(values.file);
+                                                                    imgs.push(img);
+                                                                    data.append("urls", values.file);
+                                                                }
+                                                                
+                                                                if (values.salePriceKilo) {
+                                                                    data.append("salePriceKilo", values.salePriceKilo);
+                                                                }
+                                                                const resp = await patchProduct(p.id, {salePriceKilo:values.salePriceKilo, urls:imgs});
+                                                                console.log(resp);
+                                                                // navigate(`/categories`)
+                                                                dispatch(updateProduct(resp));
+                                                                handleModal(null)
+                                                                // window.location.reload(false);
+                                                                // <Navigate replace to="/categories/2" />
+                                                            }
+                                                            
+                                                        }
+                                                    >
+                                                        {(formProps) => (
+                                                            <Form>
+                                                                <TextInput name="salePriceKilo" label="Precio por kilo" type="number" />
+                                                                <input name="file" type="file" accept=".jpg, .png" onChange= {(e) => {
+                                                                    formProps.setFieldValue("file", e.target.files[0])
+                                                                }} />
+                                                                
+                                                                <br />
+                                                                <button type="submit">Enviar</button>
+                                                            </Form>
+                                                        )}
+                                                           
+                                                    </Formik>                    
                                                 </div>
                                             </div>
-                                        )}
-                                        <button className="add-button" ><img src={"../../icons/agregar.png"} /></button>    
-                                        <button className="delete-button" ><img src={"../../icons/borrar.png"} /></button>    
+                                        )} */}
+                                          
                                     </div>
                                 </section> 
                             </div>
