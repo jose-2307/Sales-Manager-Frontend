@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { updateProduct } from "../features/products/productSlice";
-import { patchProduct } from "../services/products.service";
+import { patchProductBack } from "../services/products.service";
 import { submitImage } from "../services/images.service";
 import { Card, CardMedia, CardContent, Typography, Button } from "@mui/material";
 
@@ -44,7 +44,7 @@ const EditProduct = () => {
             data.append("salePriceKilo", values.salePriceKilo);
         }
 
-        const resp = await patchProduct(productId, {salePriceKilo:values.salePriceKilo, urls:imgs});
+        const resp = await patchProductBack(productId, {salePriceKilo:values.salePriceKilo, urls:imgs});
         dispatch(updateProduct(resp));
         setProduct(resp)
 

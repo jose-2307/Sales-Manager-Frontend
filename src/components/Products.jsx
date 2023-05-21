@@ -1,21 +1,23 @@
-import { useEffect, } from "react";
+import { useEffect, useState, } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct, deleteProducts, deleteProduct } from "../features/products/productSlice";
-import { getProducts } from "../services/products.service";
+import { getProductsBack, deleteProductBack } from "../services/products.service";
 import "./styles/Products.css"
 import { useParams, Link } from "react-router-dom";
+import { Backdrop, Box, Button, Fade, Modal, Typography } from "@mui/material";
 
 
 
 const userId = 1;
 
 
+
 const Products = () => {
     const products = useSelector(state => state.products);
-    console.log(products)
+    const [open, setOpen] = useState(false); //Controla el abrir y cerrar del modal
+    const [openProductModal, setOpenProductModal] = useState(null); //Controla que se abra el modal del producto asociado
 
     const dispatch = useDispatch();
-    // const [editProduct, setEditProduct] = useState(null);
     const { id = "" } = useParams();
     // const navigate = useNavigate(); //Para navegar a una url específica
 
@@ -32,7 +34,7 @@ const Products = () => {
         if (id === "") return 
         const fetchProducts = async () => {
             try {
-                const data = await getProducts(userId,id);
+                const data = await getProductsBack(userId,id);
                 // dispatch(addProduct({data, id}));
                 data.forEach(x => {
                     dispatch(addProduct(x));
@@ -45,6 +47,11 @@ const Products = () => {
         
     }, [dispatch, id]);
     
+    //Elemina un producto
+    const handleDelete = async id => {
+        await deleteProductBack(id);
+        dispatch(deleteProduct(id));
+    }
 
     // if (products[0] != undefined && "id" in products[0]) {
     //     console.log(products[0].id)
@@ -82,59 +89,47 @@ const Products = () => {
 
                                         <Link className="edit-button" to={`/categories/${id}/edit-product/${p.id}`}><img src={"../../icons/escribir.png"} /></Link>
                                         <Link className="add-button" to={`/categories/${id}/create-product`}><img src={"../../icons/agregar.png"} /></Link>    
-                                        <button className="delete-button" ><img src={"../../icons/borrar.png"} /></button>  
-
-                                        {/* <button className="edit-button" onClick={() => handleModal(p.id)}><img src={"../../icons/escribir.png"} /></button> */}
-                                        {/* {editProduct === p.id && (
-                                            <div className="edit-modal">
-                                                <div className="modal-content">
-                                                    <span className="close" onClick={() => handleModal(null)}>
-                                                    &times;
-                                                    </span>
-                                                    <Formik 
-                                                        initialValues={{salePriceKilo: "", file:""}} 
-                                                        validate={validate} 
-                                                        onSubmit={ 
-                                                            async (values) => {
-                                                                const data = new FormData();
-                                                                let imgs = [];
-                                                                if (values.file) {
-                                                                    const img = await submitImage(values.file);
-                                                                    imgs.push(img);
-                                                                    data.append("urls", values.file);
-                                                                }
-                                                                
-                                                                if (values.salePriceKilo) {
-                                                                    data.append("salePriceKilo", values.salePriceKilo);
-                                                                }
-                                                                const resp = await patchProduct(p.id, {salePriceKilo:values.salePriceKilo, urls:imgs});
-                                                                console.log(resp);
-                                                                // navigate(`/categories`)
-                                                                dispatch(updateProduct(resp));
-                                                                handleModal(null)
-                                                                // window.location.reload(false);
-                                                                // <Navigate replace to="/categories/2" />
-                                                            }
-                                                            
-                                                        }
+                                        <button className="delete-button" onClick={() => {setOpenProductModal(p.id); setOpen(true)}}><img src={"../../icons/borrar.png"} /></button>
+                                        {openProductModal === p.id && ( // Controla que el modal a abrir sea el del producto asociado según el botón cliqueado
+                                            <Modal
+                                                aria-labelledby="transition-modal-title"
+                                                aria-describedby="transition-modal-description"
+                                                open={open} 
+                                                onClose={() => {setOpenProductModal(null); setOpen(false)}}
+                                                closeAfterTransition
+                                                slots={{ backdrop: Backdrop }}
+                                                slotProps={{
+                                                backdrop: {
+                                                    timeout: 500,
+                                                },
+                                                }}
+                                            >
+                                                <Fade in={open}>
+                                                    <Box sx={{
+                                                        position: "absolute",
+                                                        top: '50%',
+                                                        left: '50%',
+                                                        transform: 'translate(-50%, -50%)',
+                                                        width: 400,
+                                                        bgcolor: 'background.paper',
+                                                        border: '2px solid #000',
+                                                        boxShadow: 24,
+                                                        p: 4,}}
                                                     >
-                                                        {(formProps) => (
-                                                            <Form>
-                                                                <TextInput name="salePriceKilo" label="Precio por kilo" type="number" />
-                                                                <input name="file" type="file" accept=".jpg, .png" onChange= {(e) => {
-                                                                    formProps.setFieldValue("file", e.target.files[0])
-                                                                }} />
-                                                                
-                                                                <br />
-                                                                <button type="submit">Enviar</button>
-                                                            </Form>
-                                                        )}
-                                                           
-                                                    </Formik>                    
-                                                </div>
-                                            </div>
-                                        )} */}
-                                          
+                                                        <Typography id="transition-modal-title" variant="h6" component="h2">
+                                                            ¿Estás seguro?
+                                                        </Typography>
+                                                        <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+                                                            El producto &quot;{p.name[0].toUpperCase().concat(p.name.slice(1))}&quot; será eliminado y <b>no podrá ser recuparado.</b>
+                                                        </Typography>
+                                                        <br></br>
+                                                        <Button variant="contained" style={{marginRight: "12%", marginLeft: "16%", backgroundColor: "grey"}} onClick={() => setOpen(false)}>Cancelar</Button>
+                                                        <Button variant="contained" color="error" style={{marginRight: "10%"}} onClick={() => handleDelete(p.id)}>Sí, eliminar</Button>
+                                                    </Box>
+                                                </Fade>
+                                            </Modal>
+                                        )}
+                                        
                                     </div>
                                 </section> 
                             </div>
