@@ -82,7 +82,7 @@ const EditProduct = () => {
                             >
                                 {(formProps) => (
                                     <Form>
-                                        <TextInput name="salePriceKilo" label="Precio por kilo" type="number" />
+                                        <TextInput name="salePriceKilo" label="Precio por kilo" adornment="$" type="number" />
                                         <br />
                                         <label 
                                             htmlFor="image" 

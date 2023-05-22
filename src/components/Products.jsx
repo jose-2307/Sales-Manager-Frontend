@@ -88,7 +88,7 @@ const Products = () => {
                                     <div className="icons-center">
 
                                         <Link className="edit-button" to={`/categories/${id}/edit-product/${p.id}`}><img src={"../../icons/escribir.png"} /></Link>
-                                        <Link className="add-button" to={`/categories/${id}/create-product`}><img src={"../../icons/agregar.png"} /></Link>    
+                                        <Link className="add-button" to={`/categories/${id}/create-purchase/${p.id}`}><img src={"../../icons/agregar.png"} /></Link>    
                                         <button className="delete-button" onClick={() => {setOpenProductModal(p.id); setOpen(true)}}><img src={"../../icons/borrar.png"} /></button>
                                         {openProductModal === p.id && ( // Controla que el modal a abrir sea el del producto asociado según el botón cliqueado
                                             <Modal

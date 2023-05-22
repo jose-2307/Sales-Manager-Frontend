@@ -1,20 +1,22 @@
 import { useField } from "formik";
 import "./styles/TextInput.css";
-import { Input, InputAdornment, InputLabel } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 
-const TextInput = ({ label, ...props }) => {
+const TextInput = ({ label, adornment, ...props }) => {
     const [field, meta] = useField(props); //Obtenemos los campos field (contiene todos los valores asociados al campo) y meta (contiene los errores)
     return (
         <div>
-            <InputLabel htmlFor="standard-adornment-amount">{label}</InputLabel>
-            {/* <label className="label">{label}</label> */}
-            <Input
-                id="standard-adornment-amount"
-                {...field} {...props}
-                startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            <TextField
+                error={meta.touched && meta.error ? true : false}
+                label={label}
+                id="standard-start-adornment"
+                sx={{ m: 1, width: '30ch' }}
+                InputProps={{
+                    startAdornment: adornment ? <InputAdornment position="start">{adornment}</InputAdornment> : null , ...field, ...props
+                }}
+                variant="standard"
+                helperText={meta.touched && meta.error ? `Error: ${meta.error}` : null}
             />
-            {/* <input className="input" {...field} {...props} /> */}
-            {meta.touched && meta.error ? <div className="error">{meta.error}</div> : null}
         </div>
         
     )

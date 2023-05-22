@@ -1,5 +1,26 @@
 const ENDPOINT = "http://localhost:8000/api/v1/products";
 
+export const postProductsBack = async (userId, productId, {purchaseDate, weight, purchasePriceKilo}) => {
+    const response = await fetch(ENDPOINT+`/purchase`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            purchaseDate,
+            weight,
+            purchasePriceKilo,
+            productId,
+            userId,
+        }),
+    });
+    if(response.ok) {
+        return response.json();
+    } else {
+        throw new Error("Error obtiendo productos")
+    }
+}
+
 export const getProductsBack = async (userId, categoryId) => {
     const response = await fetch(ENDPOINT+`/${userId}/${categoryId}`);
     if(response.ok) {
