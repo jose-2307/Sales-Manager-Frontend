@@ -16,6 +16,7 @@ const Products = () => {
     const products = useSelector(state => state.products);
     const [open, setOpen] = useState(false); //Controla el abrir y cerrar del modal
     const [openProductModal, setOpenProductModal] = useState(null); //Controla que se abra el modal del producto asociado
+    const [count, setCount] = useState(0); //Controla la cantidad de productos encontrados
 
     const dispatch = useDispatch();
     const { id = "" } = useParams();
@@ -39,6 +40,7 @@ const Products = () => {
                 data.forEach(x => {
                     dispatch(addProduct(x));
                 });
+                setCount(data.length);
             } catch (error) {
                 console.log(error.message);
             }
@@ -51,6 +53,7 @@ const Products = () => {
     const handleDelete = async id => {
         await deleteProductBack(id);
         dispatch(deleteProduct(id));
+        setCount(count - 1);
     }
 
     // if (products[0] != undefined && "id" in products[0]) {
@@ -68,12 +71,16 @@ const Products = () => {
             <h1>Mis productos</h1>
             <div className="container-all">
                 <div className="container-products">
+                    <Link className="createProduct" to={`/categories/${id}/create-product`}>Crear producto<img src="../../icons/crear.png"/></Link>
+                    <p className="countProducts"><b>{count}</b> productos</p>
                     {products.length === 0 
                     ? <h3>No hay productos</h3>
                     :
                         products.map(p => 
                             <div className="container-product" key={p.id}>
-                                <img className="img-product" alt={p.name} src={"../../categories/frutos-secos.jpg"} width="50%" height="32%" />
+                                <img className="img-product" alt={p.name} 
+                                src={p.images.length === 0 ? "../../categories/frutos-secos.jpg" : p.images[0].url} 
+                                width="50%" height="32%" />
                                 <section className="product-info">
                                     <h3 className="product-title">
                                         {p.name[0].toUpperCase().concat(p.name.slice(1))}
@@ -129,7 +136,6 @@ const Products = () => {
                                                 </Fade>
                                             </Modal>
                                         )}
-                                        
                                     </div>
                                 </section> 
                             </div>

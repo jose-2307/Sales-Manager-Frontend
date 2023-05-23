@@ -68,8 +68,7 @@ const EditProduct = () => {
                             component="img"
                             alt={product.name}
                             height="140"
-                            // image={product.images[0]}
-                            image="../../../categories/frutos-secos.jpg"
+                            image={product.images.length === 0 ? "../../categories/frutos-secos.jpg" : product.images[0].url}
                         />
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">

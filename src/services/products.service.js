@@ -1,6 +1,27 @@
 const ENDPOINT = "http://localhost:8000/api/v1/products";
 
-export const postProductsBack = async (userId, productId, {purchaseDate, weight, purchasePriceKilo}) => {
+export const postProductBack = async (userId, categoryId, { name, salePriceKilo, urls }) => {
+    const response = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            name,
+            salePriceKilo,
+            urls,
+            userId,
+            categoryId,
+        }),
+    });
+    if(response.ok) {
+        return response.json();
+    } else {
+        throw new Error("Error creando producto")
+    }
+}
+
+export const postPurchaseBack = async (userId, productId, {purchaseDate, weight, purchasePriceKilo}) => {
     const response = await fetch(ENDPOINT+`/purchase`, {
         method: "POST",
         headers: {
@@ -17,7 +38,7 @@ export const postProductsBack = async (userId, productId, {purchaseDate, weight,
     if(response.ok) {
         return response.json();
     } else {
-        throw new Error("Error obtiendo productos")
+        throw new Error("Error creando purchase")
     }
 }
 
