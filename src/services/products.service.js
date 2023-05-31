@@ -1,4 +1,6 @@
-const ENDPOINT = "http://localhost:8000/api/v1/products";
+// const ENDPOINT = "http://localhost:8000/api/v1/products";
+const ENDPOINT = "http://localhost:8000/api/v1/profile/my-products";
+
 
 export const postProductBack = async (userId, categoryId, { name, salePriceKilo, urls }) => {
     const response = await fetch(ENDPOINT, {
@@ -42,8 +44,12 @@ export const postPurchaseBack = async (userId, productId, {purchaseDate, weight,
     }
 }
 
-export const getProductsBack = async (userId, categoryId) => {
-    const response = await fetch(ENDPOINT+`/${userId}/${categoryId}`);
+export const getProductsBack = async ({token}, categoryId) => {
+    const response = await fetch(ENDPOINT+`/${categoryId}`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
     if(response.ok) {
         return response.json();
     } else {

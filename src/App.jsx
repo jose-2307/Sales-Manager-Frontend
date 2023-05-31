@@ -6,6 +6,7 @@ import Home from "./components/Home";
 import EditProduct from './components/EditProduct';
 import CreatePurchase from './components/CreatePurchase';
 import CreateProduct from "./components/CreateProduct";
+import Login from './components/Login';
 
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/categories/:id/edit-product/:productId" element={<EditProduct />}/>
           <Route path="/categories/:id/create-purchase/:productId" element={<CreatePurchase />}/>
           <Route path="/categories/:id/create-product" element={<CreateProduct />}/>
+          <Route path="/login" element={<Login />}/>
           <Route path="*" element={"404: ruta no encontrada"} />
         </Routes>
     </BrowserRouter>

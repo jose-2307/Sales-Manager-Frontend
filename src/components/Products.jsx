@@ -5,11 +5,11 @@ import { getProductsBack, deleteProductBack } from "../services/products.service
 import "./styles/Products.css"
 import { useParams, Link } from "react-router-dom";
 import { Backdrop, Box, Button, Fade, Modal, Typography } from "@mui/material";
+import Cookies from "universal-cookie/cjs/Cookies";
 
 
-
-const userId = 1;
-
+// const userId = 1;
+const cookies = new Cookies();
 
 
 const Products = () => {
@@ -35,7 +35,7 @@ const Products = () => {
         if (id === "") return 
         const fetchProducts = async () => {
             try {
-                const data = await getProductsBack(userId,id);
+                const data = await getProductsBack({token: cookies.get("accessToken")},id);
                 // dispatch(addProduct({data, id}));
                 data.forEach(x => {
                     dispatch(addProduct(x));
