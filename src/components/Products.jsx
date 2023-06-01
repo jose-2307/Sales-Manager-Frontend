@@ -35,7 +35,7 @@ const Products = () => {
         if (id === "") return 
         const fetchProducts = async () => {
             try {
-                const data = await getProductsBack({token: cookies.get("accessToken")},id);
+                const data = await getProductsBack(cookies.get("accessToken"),id);
                 // dispatch(addProduct({data, id}));
                 data.forEach(x => {
                     dispatch(addProduct(x));
@@ -51,7 +51,7 @@ const Products = () => {
     
     //Elemina un producto
     const handleDelete = async id => {
-        await deleteProductBack(id);
+        await deleteProductBack(cookies.get("accessToken"), id);
         dispatch(deleteProduct(id));
         setCount(count - 1);
     }

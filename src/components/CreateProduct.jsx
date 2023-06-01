@@ -4,8 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { postProductBack } from "../services/products.service";
 import { submitImage } from "../services/images.service";
 import { Card, CardMedia, CardContent, Typography, Button } from "@mui/material";
+import Cookies from "universal-cookie";
 
-const userId = 1;
+const cookies = new Cookies();
 
 const validate = (values) => {
     const errors = {};
@@ -42,7 +43,7 @@ const CreateProduct = () => {
             urls.push(img.url);
         }
 
-        await postProductBack(userId, id, {name: values.name, salePriceKilo: values.salePriceKilo, urls });        
+        await postProductBack(cookies.get("accessToken"), id, {name: values.name, salePriceKilo: values.salePriceKilo, urls });        
         
         navigate(-1); //Para volver a la página anterior
     }

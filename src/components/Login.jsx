@@ -2,7 +2,7 @@ import { Formik, Form } from "formik";
 import { Avatar, Box, Button, CssBaseline, Grid, Paper, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import TextInput from "./TextInput";
-import { loginBack } from "../services/login.service";
+import { loginBack } from "../services/auth.service";
 import Notification from "./Notification";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

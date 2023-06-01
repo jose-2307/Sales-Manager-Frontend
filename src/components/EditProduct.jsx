@@ -8,6 +8,9 @@ import { updateProduct } from "../features/products/productSlice";
 import { patchProductBack } from "../services/products.service";
 import { submitImage } from "../services/images.service";
 import { Card, CardMedia, CardContent, Typography, Button } from "@mui/material";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const validate = (values) => {
     const errors = {};
@@ -44,7 +47,7 @@ const EditProduct = () => {
             data.append("salePriceKilo", values.salePriceKilo);
         }
 
-        const resp = await patchProductBack(productId, {salePriceKilo:values.salePriceKilo, urls:imgs});
+        const resp = await patchProductBack(cookies.get("accessToken"), productId, {salePriceKilo:values.salePriceKilo, urls:imgs});
         dispatch(updateProduct(resp));
         setProduct(resp)
 
@@ -68,7 +71,7 @@ const EditProduct = () => {
                             component="img"
                             alt={product.name}
                             height="140"
-                            image={product.images.length === 0 ? "../../categories/frutos-secos.jpg" : product.images[0].url}
+                            image={product.images.length === 0 ? "http://res.cloudinary.com/dmevmh3ch/image/upload/v1685639993/m90r4s6zt6ooxb5jovpl.png" : product.images[0].url}
                         />
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">

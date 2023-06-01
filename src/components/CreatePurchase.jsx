@@ -7,8 +7,9 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { updateProduct } from "../features/products/productSlice";
 import { postPurchaseBack } from "../services/products.service";
 import { Card, CardMedia, CardContent, Typography, Button } from "@mui/material";
+import Cookies from "universal-cookie";
 
-const userId = 1;
+const cookies = new Cookies();
 
 const validate = (values) => {
     const errors = {};
@@ -52,7 +53,7 @@ const EditProduct = () => {
         //     data.append("salePriceKilo", values.salePriceKilo);
         // }
 
-        const resp = await postPurchaseBack(userId, productId, {purchaseDate:values.purchaseDate, weight:values.weight, purchasePriceKilo:values.purchasePriceKilo});        dispatch(updateProduct(resp));
+        const resp = await postPurchaseBack(cookies.get("accessToken"), productId, {purchaseDate:values.purchaseDate, weight:values.weight, purchasePriceKilo:values.purchasePriceKilo});        dispatch(updateProduct(resp));
         // setProduct(resp)
 
         navigate(-1); //Para volver a la página anterior
@@ -75,8 +76,7 @@ const EditProduct = () => {
                             component="img"
                             alt={product.name}
                             height="140"
-                            image={product.images.length === 0 ? "../../categories/frutos-secos.jpg" : product.images[0].url}
-
+                            image={product.images.length === 0 ? "http://res.cloudinary.com/dmevmh3ch/image/upload/v1685639993/m90r4s6zt6ooxb5jovpl.png" : product.images[0].url}
                         />
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">
