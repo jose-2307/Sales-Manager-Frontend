@@ -7,9 +7,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { updateProduct } from "../features/products/productSlice";
 import { postPurchaseBack } from "../services/products.service";
 import { Card, CardMedia, CardContent, Typography, Button } from "@mui/material";
-import Cookies from "universal-cookie";
 
-const cookies = new Cookies();
 
 const validate = (values) => {
     const errors = {};
@@ -53,7 +51,7 @@ const EditProduct = () => {
         //     data.append("salePriceKilo", values.salePriceKilo);
         // }
 
-        const resp = await postPurchaseBack(cookies.get("accessToken"), productId, {purchaseDate:values.purchaseDate, weight:values.weight, purchasePriceKilo:values.purchasePriceKilo});        dispatch(updateProduct(resp));
+        const resp = await postPurchaseBack(productId, {purchaseDate:values.purchaseDate, weight:values.weight, purchasePriceKilo:values.purchasePriceKilo});        dispatch(updateProduct(resp));
         // setProduct(resp)
 
         navigate(-1); //Para volver a la página anterior

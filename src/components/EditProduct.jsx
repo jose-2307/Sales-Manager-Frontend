@@ -8,9 +8,7 @@ import { updateProduct } from "../features/products/productSlice";
 import { patchProductBack } from "../services/products.service";
 import { submitImage } from "../services/images.service";
 import { Card, CardMedia, CardContent, Typography, Button } from "@mui/material";
-import Cookies from "universal-cookie";
 
-const cookies = new Cookies();
 
 const validate = (values) => {
     const errors = {};
@@ -47,7 +45,7 @@ const EditProduct = () => {
             data.append("salePriceKilo", values.salePriceKilo);
         }
 
-        const resp = await patchProductBack(cookies.get("accessToken"), productId, {salePriceKilo:values.salePriceKilo, urls:imgs});
+        const resp = await patchProductBack(productId, {salePriceKilo:values.salePriceKilo, urls:imgs});
         dispatch(updateProduct(resp));
         setProduct(resp)
 

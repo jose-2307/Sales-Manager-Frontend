@@ -43,7 +43,7 @@ const CreateProduct = () => {
             urls.push(img.url);
         }
 
-        await postProductBack(cookies.get("accessToken"), id, {name: values.name, salePriceKilo: values.salePriceKilo, urls });        
+        await postProductBack(id, {name: values.name, salePriceKilo: values.salePriceKilo, urls });        
         
         navigate(-1); //Para volver a la página anterior
     }

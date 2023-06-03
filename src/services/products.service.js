@@ -1,13 +1,14 @@
+import { fetchWrapper } from "./auth.service";
+
 // const ENDPOINT = "http://localhost:8000/api/v1/products";
 const ENDPOINT = "http://localhost:8000/api/v1/profile";
 
 
-export const postProductBack = async (token, categoryId, { name, salePriceKilo, urls }) => {
-    const response = await fetch(`${ENDPOINT}/product`, {
+export const postProductBack = async (categoryId, { name, salePriceKilo, urls }) => {
+    const response = await fetchWrapper(`${ENDPOINT}/product`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
             name,
@@ -23,12 +24,11 @@ export const postProductBack = async (token, categoryId, { name, salePriceKilo, 
     }
 }
 
-export const postPurchaseBack = async (token, productId, {purchaseDate, weight, purchasePriceKilo}) => {
-    const response = await fetch(`${ENDPOINT}/product-purchase`, {
+export const postPurchaseBack = async (productId, {purchaseDate, weight, purchasePriceKilo}) => {
+    const response = await fetchWrapper(`${ENDPOINT}/product-purchase`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
             purchaseDate,
@@ -44,12 +44,9 @@ export const postPurchaseBack = async (token, productId, {purchaseDate, weight, 
     }
 }
 
-export const getProductsBack = async (token, categoryId) => {
-    const response = await fetch(`${ENDPOINT}/my-products/${categoryId}`, {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    });
+
+export const getProductsBack = async (categoryId) => {
+    const response = await fetchWrapper(`${ENDPOINT}/my-products/${categoryId}`);
     if(response.ok) {
         return response.json();
     } else {
@@ -57,12 +54,11 @@ export const getProductsBack = async (token, categoryId) => {
     }
 }
 
-export const patchProductBack = async (token, productId, {salePriceKilo, urls}) => {
-    const response = await fetch(`${ENDPOINT}/product/${productId}`, {
+export const patchProductBack = async (productId, {salePriceKilo, urls}) => {
+    const response = await fetchWrapper(`${ENDPOINT}/product/${productId}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
             salePriceKilo,
@@ -76,12 +72,9 @@ export const patchProductBack = async (token, productId, {salePriceKilo, urls}) 
     }
 }
 
-export const deleteProductBack = async (token, productId) => {
-    const response = await fetch(`${ENDPOINT}/product/${productId}`, {
+export const deleteProductBack = async (productId) => {
+    const response = await fetchWrapper(`${ENDPOINT}/product/${productId}`, {
         method: "DELETE",
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
     });
     if (response.ok) {
         return response.json();
