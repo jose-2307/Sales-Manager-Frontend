@@ -7,6 +7,7 @@ import EditProduct from './components/EditProduct';
 import CreatePurchase from './components/CreatePurchase';
 import CreateProduct from "./components/CreateProduct";
 import Login from './components/Login';
+import SignUp from './components/SignUp';
 
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/categories/:id/create-purchase/:productId" element={<CreatePurchase />}/>
           <Route path="/categories/:id/create-product" element={<CreateProduct />}/>
           <Route path="/login" element={<Login />}/>
+          <Route path="/sign-up" element={<SignUp />}/>
           <Route path="*" element={"404: ruta no encontrada"} />
         </Routes>
     </BrowserRouter>

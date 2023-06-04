@@ -20,7 +20,6 @@ const validate = (values) => {
 }
 const Login = () => {
     const [errorMessage, setErrorMessage] = useState(null);
-    const [user, setUser] = useState(null); //Maneja el usuario cuando se loguea
     const users = useSelector(state => state.users);
     const dispatch = useDispatch();
 
@@ -28,7 +27,6 @@ const Login = () => {
         try {
             const login = await loginBack({email: values.email, password: values.password});
             console.log(login);
-            setUser(login.user);
             dispatch(addUser(login.user));
             //cookies
             const cookies = new Cookies();
@@ -100,12 +98,12 @@ const Login = () => {
                     <Grid container>
                         <Grid item xs>
                         <Link href="#" variant="body2">
-                            Forgot password?
+                            Recuperar contraseña
                         </Link>
                         </Grid>
                         <Grid item>
-                        <Link href="#" variant="body2">
-                            {"Don't have an account? Sign Up"}
+                        <Link to="/sign-up" variant="body2">
+                            Crear cuenta
                         </Link>
                         </Grid>
                     </Grid>

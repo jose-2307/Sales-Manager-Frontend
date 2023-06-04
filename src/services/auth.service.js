@@ -3,6 +3,7 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
 const ENDPOINT = "http://localhost:8000/api/v1/auth";
+const endpointSignUp = "http://localhost:8000/api/v1/users";
 
 export const loginBack = async ({email, password}) => {
     const response = await fetch(`${ENDPOINT}/login`, {
@@ -60,4 +61,28 @@ export const fetchWrapper = async (endpoint, options = {}) => { //Utilizado para
     } 
 
     return response;
+}
+
+
+export const singUpBack = async ({name, lastName, email, password}) => {
+    const response = await fetch(endpointSignUp, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            name,
+            lastName,
+            email,
+            password,
+        }),
+    });
+    if (response.ok) {
+        return response.json();
+    } else {
+        if (response.status === 409) {
+            throw new Error("El correo electrónico ya se encuentra registrado.");
+        }
+        throw new Error("Error registrando usuario");
+    }
 }
