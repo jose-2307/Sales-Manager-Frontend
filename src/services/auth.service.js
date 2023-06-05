@@ -86,3 +86,40 @@ export const singUpBack = async ({name, lastName, email, password}) => {
         throw new Error("Error registrando usuario");
     }
 }
+
+
+export const recoveryPasswordBack = async (email) => {
+    const response = await fetch(`${ENDPOINT}/recovery-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            email,
+        }),
+    });
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error("Error: correo electrónico inválido.");
+    }
+}
+
+
+export const changePasswordBack = async (token, password) => {
+    const response = await fetch(`${ENDPOINT}/change-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            token,
+            password
+        }),
+    });
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error("Error: Permiso no autorizado.");
+    }
+}

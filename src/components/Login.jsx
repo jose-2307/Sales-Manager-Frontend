@@ -97,7 +97,7 @@ const Login = () => {
                     </Formik>
                     <Grid container>
                         <Grid item xs>
-                        <Link href="#" variant="body2">
+                        <Link to="/recovery-password" variant="body2">
                             Recuperar contraseña
                         </Link>
                         </Grid>

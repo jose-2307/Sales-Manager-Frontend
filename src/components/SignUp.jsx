@@ -96,7 +96,7 @@ const SignUp = () => {
                                 <br></br>
                                 <TextInput name="lastName" required label="Apellido" adornment=" " type="text" id="lastName" dimesions={{ m: 1, width: "66vh" }}></TextInput>
                                 <br></br>
-                                <TextInput name="email" required label="Correo electrónico" adornment=" " type="email" id="outlined-required" dimesions={{ m: 1, width: "66vh" }}></TextInput>
+                                <TextInput name="email" required label="Correo electrónico" adornment=" " type="email" id="outlined-required" dimesions={{ m: 1, width: "66vh" }} placeholder="Ej: usuario@mail.com"></TextInput>
                                 <br></br>
                                 <TextInput name="password" required label="Contraseña" adornment=" " type="password" id="password" dimesions={{ m: 1, width: "66vh" }} autoComplete="current-password"></TextInput>
                                 <Button
@@ -105,7 +105,7 @@ const SignUp = () => {
                                     variant="contained"
                                     sx={{ mt: 3, mb: 2 }}
                                 >
-                                    Iniciar sesión
+                                    Crear cuenta
                                 </Button>
                             </Form>
                         </Formik>
