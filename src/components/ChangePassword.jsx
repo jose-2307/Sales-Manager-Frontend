@@ -6,6 +6,7 @@ import { useState } from "react";
 import { changePasswordBack } from "../services/auth.service";
 import { useQuery }from "../hooks/useQuery";
 import { useNavigate } from "react-router-dom";
+import Loader from "./Loader";
 
 const validate = (values) => {
     const errors = {};
@@ -26,9 +27,12 @@ const ChangePassword = () => {
     const query = useQuery(); //Para obtener los query params.
     const [errorMessage, setErrorMessage] = useState(null);
     const [recovery, setRecovery] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navegate = useNavigate();
+    
 
     const handleSubmit = async (values) => {
+        setLoading(true);
         try {
             const token = query.get("token");
             const changePassword = await changePasswordBack(token, values.password);
@@ -41,6 +45,8 @@ const ChangePassword = () => {
             setTimeout(() => {
                 setErrorMessage(null);
             }, 5000);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -121,7 +127,7 @@ const ChangePassword = () => {
                             </>
                         )
                         }
-                        
+                    {loading && (<Loader></Loader>)}                        
                     {/* <Copyright sx={{ mt: 5 }} /> */}
                     </Box>
                 </Grid>

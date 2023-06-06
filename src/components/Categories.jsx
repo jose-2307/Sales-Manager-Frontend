@@ -1,17 +1,20 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { addCategory } from "../features/categories/categorySlice";
 import { Link } from "react-router-dom";
 import { getCategories } from "../services/categories.service";
 import "./styles/Category.css";
+import Loader from "./Loader";
 
 
 const Categories = () => {
+    const [loading, setLoading] = useState(false);
     const categories = useSelector(state => state.categories);
     const dispatch = useDispatch();
-   
+
     useEffect(() => {
-        if (categories.length === 0) {       
+        if (categories.length === 0) {      
+            setLoading(true);
             const fetchCategories = async () => {
                 try {
                     const data = await getCategories();
@@ -20,9 +23,12 @@ const Categories = () => {
                     });
                 } catch (error) {
                     console.log(error.message);
+                } finally { //Se ejecuta al final de la petición sin importar que haya habido error.
+                    setLoading(false);
                 }
             }
-            fetchCategories()
+
+            fetchCategories();
         }
     }, [dispatch, categories]);
 
@@ -39,6 +45,7 @@ const Categories = () => {
                                 </Link>
                             </div>
                         )}
+                        {loading && (<Loader></Loader>)}
                 </div>
             </div>
         </section>

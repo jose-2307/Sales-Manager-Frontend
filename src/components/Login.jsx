@@ -1,6 +1,6 @@
 import { Formik, Form } from "formik";
 import { Avatar, Box, Button, CssBaseline, Grid, Paper, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TextInput from "./TextInput";
 import { loginBack } from "../services/auth.service";
 import Notification from "./Notification";
@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../features/users/userSlice";
 import Cookies from "universal-cookie";
+import Loader from "./Loader";
 
 
 const validate = (values) => {
@@ -20,11 +21,14 @@ const validate = (values) => {
 }
 const Login = () => {
     const [errorMessage, setErrorMessage] = useState(null);
+    const [loading, setLoading] = useState(false);
     const users = useSelector(state => state.users);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleSubmit = async (values) => {
         try {
+            setLoading(true);
             const login = await loginBack({email: values.email, password: values.password});
             console.log(login);
             dispatch(addUser(login.user));
@@ -32,6 +36,11 @@ const Login = () => {
             const cookies = new Cookies();
             cookies.set("accessToken", login.accessToken, { path: "/" });
             cookies.set("refreshToken", login.refreshToken, { path: "/" });
+            
+            setLoading(false);
+            navigate("/");
+            
+
         } catch (error) {
             console.log(error.message);
             setErrorMessage("Credenciales erróneas");
@@ -61,7 +70,15 @@ const Login = () => {
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                 }}
-                />
+                >
+
+                    {/* <Typography variant="h2" color={"black"}>
+                        Sales Manager
+                    </Typography> */}
+              
+                
+                </Grid>
+                
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                 <Box
                     sx={{
@@ -107,6 +124,9 @@ const Login = () => {
                         </Link>
                         </Grid>
                     </Grid>
+                    {loading && (
+                        <Loader></Loader>
+                    )}
                     {/* <Copyright sx={{ mt: 5 }} /> */}
                     </Box>
                 </Grid>

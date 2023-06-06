@@ -5,6 +5,7 @@ import { getProductsBack, deleteProductBack } from "../services/products.service
 import "./styles/Products.css"
 import { useParams, Link } from "react-router-dom";
 import { Backdrop, Box, Button, Fade, Modal, Typography } from "@mui/material";
+import Loader from "./Loader";
 
 
 const Products = () => {
@@ -12,10 +13,11 @@ const Products = () => {
     const [open, setOpen] = useState(false); //Controla el abrir y cerrar del modal
     const [openProductModal, setOpenProductModal] = useState(null); //Controla que se abra el modal del producto asociado
     const [count, setCount] = useState(0); //Controla la cantidad de productos encontrados
+    const [loading, setLoading] = useState(false);
+
 
     const dispatch = useDispatch();
     const { id = "" } = useParams();
-    // const navigate = useNavigate(); //Para navegar a una url específica
 
     // const [messageVisible, setMessageVisible] = useState(false);
     
@@ -27,6 +29,7 @@ const Products = () => {
     }, []);
 
     useEffect(() => {
+        setLoading(true);
         if (id === "") return 
         const fetchProducts = async () => {
             try {
@@ -40,6 +43,8 @@ const Products = () => {
                 setCount(data.length);
             } catch (error) {
                 console.log(error.message);
+            } finally {
+                setLoading(false);
             }
         }
         fetchProducts();       
@@ -133,6 +138,8 @@ const Products = () => {
                                                 </Fade>
                                             </Modal>
                                         )}
+                                        {loading && (<Loader></Loader>)}
+
                                     </div>
                                 </section> 
                             </div>

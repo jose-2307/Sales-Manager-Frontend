@@ -4,15 +4,18 @@ import TextInput from "./TextInput";
 import Notification from "./Notification";
 import { useState } from "react";
 import { recoveryPasswordBack } from "../services/auth.service";
+import Loader from "./Loader";
 
 
 const RecoveryPassword = () => {
 
     const [errorMessage, setErrorMessage] = useState(null);
     const [email, setEmail] = useState(null);
-    // const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+
 
     const handleSubmit = async (values) => {
+        setLoading(true);
         try {
             const recovery = await recoveryPasswordBack(values.email);
             console.log(recovery);
@@ -26,6 +29,8 @@ const RecoveryPassword = () => {
             setTimeout(() => {
                 setErrorMessage(null);
             }, 5000);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -99,6 +104,7 @@ const RecoveryPassword = () => {
                             </>
                             )
                         }
+                    {loading && (<Loader></Loader>)}
                         
                     {/* <Copyright sx={{ mt: 5 }} /> */}
                     </Box>

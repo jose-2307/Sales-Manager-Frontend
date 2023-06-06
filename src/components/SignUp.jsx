@@ -5,6 +5,7 @@ import Notification from "./Notification";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { singUpBack } from "../services/auth.service";
+import Loader from "./Loader";
 
 const validate = (values) => {
     const errors = {};
@@ -36,9 +37,12 @@ const validate = (values) => {
 const SignUp = () => {
 
     const [errorMessage, setErrorMessage] = useState(null);
+    const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
 
     const handleSubmit = async (values) => {
+        setLoading(true);
         try {
             const singUp = await singUpBack({name: values.name, lastName: values.lastName, email: values.email, password: values.password});
             console.log(singUp);
@@ -50,6 +54,8 @@ const SignUp = () => {
             setTimeout(() => {
                 setErrorMessage(null);
             }, 5000);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -82,7 +88,7 @@ const SignUp = () => {
                         alignItems: "center",
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: "secundary.main" }}>
+                        <Avatar sx={{ m: 1 }}>
                         </Avatar>
                         <Typography component="h1" variant="h5">
                         Crear cuenta
@@ -107,8 +113,17 @@ const SignUp = () => {
                                 >
                                     Crear cuenta
                                 </Button>
+                                <Button
+                                    onClick={() => navigate("/login")}
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2 }}
+                                    
+                                >
+                                    Regresar
+                                </Button>
                             </Form>
                         </Formik>
+                    {loading && (<Loader></Loader>)}                        
                     {/* <Copyright sx={{ mt: 5 }} /> */}
                     </Box>
                 </Grid>
