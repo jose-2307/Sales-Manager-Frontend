@@ -8,7 +8,7 @@ export const getCategories = async () => {
     if(response.ok) {
         return response.json();
     } else {
-        throw new Error("Error obtiendo categorías")
+        throw new Error("Error obtiendo categorías.")
     }
 }
 

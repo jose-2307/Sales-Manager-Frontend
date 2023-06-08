@@ -8,6 +8,7 @@ import Loader from "./Loader";
 
 
 const Categories = () => {
+    const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const categories = useSelector(state => state.categories);
     const dispatch = useDispatch();
@@ -15,6 +16,7 @@ const Categories = () => {
     useEffect(() => {
         if (categories.length === 0) {      
             setLoading(true);
+            let errorOCurred = false;
             const fetchCategories = async () => {
                 try {
                     const data = await getCategories();
@@ -23,8 +25,12 @@ const Categories = () => {
                     });
                 } catch (error) {
                     console.log(error.message);
-                } finally { //Se ejecuta al final de la petición sin importar que haya habido error.
-                    setLoading(false);
+                    setErrorMessage(error.message);
+                    errorOCurred = true;
+                } finally {
+                    if (!errorOCurred) {
+                        setLoading(false);
+                    }
                 }
             }
 
@@ -32,20 +38,26 @@ const Categories = () => {
         }
     }, [dispatch, categories]);
 
+    const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
+        setLoading(false);
+        setErrorMessage("");
+    }
+
     return (
         <section>
             <h1>Categorías</h1>
             <div className="container-all">
                 <div className="center">
-                        {categories.map(c => 
-                            <div className="container-category" key={c.id}>
-                                <Link to={`/categories/${c.id}`} className="link">
-                                    <h3>{c.name}</h3>
-                                    <img alt={c.name} src={c.image} width="50%" height="32%" />
-                                </Link>
-                            </div>
-                        )}
-                        {loading && (<Loader></Loader>)}
+                    {categories.map(c => 
+                        <div className="container-category" key={c.id}>
+                            <Link to={`/categories/${c.id}`} className="link">
+                                <h3>{c.name}</h3>
+                                <img alt={c.name} src={c.image} width="50%" height="32%" />
+                            </Link>
+                        </div>
+                    )}
+                    {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
+
                 </div>
             </div>
         </section>

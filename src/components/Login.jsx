@@ -3,9 +3,8 @@ import { Avatar, Box, Button, CssBaseline, Grid, Paper, Typography } from "@mui/
 import { Link, useNavigate } from "react-router-dom";
 import TextInput from "./TextInput";
 import { loginBack } from "../services/auth.service";
-import Notification from "./Notification";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addUser } from "../features/users/userSlice";
 import Cookies from "universal-cookie";
 import Loader from "./Loader";
@@ -20,15 +19,15 @@ const validate = (values) => {
     return errors;
 }
 const Login = () => {
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    const users = useSelector(state => state.users);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleSubmit = async (values) => {
+        setLoading(true);
+        let errorOCurred = false;
         try {
-            setLoading(true);
             const login = await loginBack({email: values.email, password: values.password});
             console.log(login);
             dispatch(addUser(login.user));
@@ -39,22 +38,25 @@ const Login = () => {
             
             setLoading(false);
             navigate("/");
-            
-
         } catch (error) {
             console.log(error.message);
-            setErrorMessage("Credenciales erróneas");
-            setTimeout(() => {
-                setErrorMessage(null);
-            }, 5000);
+            setErrorMessage(error.message);
+            errorOCurred = true;
+        } finally {
+            if (!errorOCurred) {
+                setLoading(false);
+            }
         }
     }
-    console.log(users);
+    
+    const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
+        setLoading(false);
+        setErrorMessage("");
+    }
 
 
     return (
         <div className="container">
-            <Notification message={errorMessage}/>
             <Grid container component="main" sx={{ height: "100vh" }}>
                 <CssBaseline />
                 <Grid
@@ -124,9 +126,8 @@ const Login = () => {
                         </Link>
                         </Grid>
                     </Grid>
-                    {loading && (
-                        <Loader></Loader>
-                    )}
+                    {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
+
                     {/* <Copyright sx={{ mt: 5 }} /> */}
                     </Box>
                 </Grid>

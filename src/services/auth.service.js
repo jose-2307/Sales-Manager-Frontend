@@ -19,7 +19,7 @@ export const loginBack = async ({email, password}) => {
     if (response.ok) {
         return response.json();
     } else {
-        throw new Error("Error iniciando sesión")
+        throw new Error("Dirección de correo electrónico o contraseña incorrecta.")
     }
 }
 
@@ -101,7 +101,7 @@ export const recoveryPasswordBack = async (email) => {
     if (response.ok) {
         return response.json();
     } else {
-        throw new Error("Error: correo electrónico inválido.");
+        throw new Error("Correo electrónico no válido.");
     }
 }
 
@@ -120,6 +120,6 @@ export const changePasswordBack = async (token, password) => {
     if (response.ok) {
         return response.json();
     } else {
-        throw new Error("Error: Permiso no autorizado.");
+        throw new Error("Permiso no autorizado.");
     }
 }

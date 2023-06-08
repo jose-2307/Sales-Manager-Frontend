@@ -1,7 +1,6 @@
 import { Avatar, Box, Button, CssBaseline, Grid, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import TextInput from "./TextInput";
-import Notification from "./Notification";
 import { useState } from "react";
 import { changePasswordBack } from "../services/auth.service";
 import { useQuery }from "../hooks/useQuery";
@@ -25,7 +24,7 @@ const validate = (values) => {
 
 const ChangePassword = () => {
     const query = useQuery(); //Para obtener los query params.
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
     const [recovery, setRecovery] = useState(false);
     const [loading, setLoading] = useState(false);
     const navegate = useNavigate();
@@ -33,6 +32,7 @@ const ChangePassword = () => {
 
     const handleSubmit = async (values) => {
         setLoading(true);
+        let errorOCurred = false;
         try {
             const token = query.get("token");
             const changePassword = await changePasswordBack(token, values.password);
@@ -42,17 +42,22 @@ const ChangePassword = () => {
         } catch (error) {
             console.log(error.message);
             setErrorMessage(error.message);
-            setTimeout(() => {
-                setErrorMessage(null);
-            }, 5000);
+            errorOCurred = true;
+
         } finally {
-            setLoading(false);
+            if (!errorOCurred) {
+                setLoading(false);
+            }
         }
+    }
+
+    const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
+        setLoading(false);
+        setErrorMessage("");
     }
 
     return (
         <div className="container">
-            <Notification message={errorMessage}/>
             <Grid container component="main" sx={{ height: "100vh" }}>
                 <CssBaseline />
                 <Grid
@@ -127,7 +132,8 @@ const ChangePassword = () => {
                             </>
                         )
                         }
-                    {loading && (<Loader></Loader>)}                        
+                    {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
+                       
                     {/* <Copyright sx={{ mt: 5 }} /> */}
                     </Box>
                 </Grid>

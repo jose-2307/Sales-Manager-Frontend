@@ -1,42 +1,46 @@
 import { Avatar, Box, Button, CssBaseline, Grid, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import TextInput from "./TextInput";
-import Notification from "./Notification";
 import { useState } from "react";
 import { recoveryPasswordBack } from "../services/auth.service";
 import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
 
 
 const RecoveryPassword = () => {
 
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
     const [email, setEmail] = useState(null);
     const [loading, setLoading] = useState(false);
-
+    const navigate = useNavigate();
 
     const handleSubmit = async (values) => {
         setLoading(true);
+        let errorOCurred = false;
         try {
             const recovery = await recoveryPasswordBack(values.email);
             console.log(recovery);
             setEmail(values.email);
 
-            // navigate("/login");
-
         } catch (error) {
             console.log(error.message);
             setErrorMessage(error.message);
-            setTimeout(() => {
-                setErrorMessage(null);
-            }, 5000);
+            errorOCurred = true;
+
         } finally {
-            setLoading(false);
+            if (!errorOCurred) {
+                setLoading(false);
+            }
         }
+    }
+
+    const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
+        setLoading(false);
+        setErrorMessage("");
     }
 
     return (
         <div className="container">
-            <Notification message={errorMessage}/>
             <Grid container component="main" sx={{ height: "100vh" }}>
                 <CssBaseline />
                 <Grid
@@ -84,14 +88,24 @@ const RecoveryPassword = () => {
                                     <Form>
                                         <TextInput name="email" required label="Correo electrónico"  adornment=" " type="email" id="outlined-required" dimesions={{ m: 1, width: "66vh" }} placeholder="Ej: usuario@mail.com"></TextInput>
                                         <br></br>
-                                        <Button
-                                            type="submit"
-                                            fullWidth
-                                            variant="contained"
-                                            sx={{ mt: 3, mb: 2 }}
-                                        >
-                                            Recuperar contraseña
-                                        </Button>
+                                        <div style={{display:"flex", flexDirection: "column", alignItems: "center"}}>
+                                            
+                                            <Button
+                                                type="submit"
+                                                fullWidth
+                                                variant="contained"
+                                                sx={{ mt: 3, mb: 2 }}
+                                            >
+                                                Recuperar contraseña
+                                            </Button>
+                                            <Button
+                                                onClick={() => navigate("/login")}
+                                                variant="contained"
+                                                sx={{ mt: 3, mb: 2 }}
+                                            >
+                                                Volver
+                                            </Button>
+                                        </div>
                                     </Form>
                                 </Formik>
                             </>
@@ -104,7 +118,7 @@ const RecoveryPassword = () => {
                             </>
                             )
                         }
-                    {loading && (<Loader></Loader>)}
+                    {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
                         
                     {/* <Copyright sx={{ mt: 5 }} /> */}
                     </Box>

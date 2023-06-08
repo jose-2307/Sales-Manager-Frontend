@@ -20,7 +20,7 @@ export const postProductBack = async (categoryId, { name, salePriceKilo, urls })
     if(response.ok) {
         return response.json();
     } else {
-        throw new Error("Error creando producto")
+        throw new Error("El producto ingresado ya se encuentra creado.")
     }
 }
 
@@ -40,7 +40,7 @@ export const postPurchaseBack = async (productId, {purchaseDate, weight, purchas
     if(response.ok) {
         return response.json();
     } else {
-        throw new Error("Error creando purchase")
+        throw new Error("Error agregando producto.")
     }
 }
 
@@ -50,7 +50,7 @@ export const getProductsBack = async (categoryId) => {
     if(response.ok) {
         return response.json();
     } else {
-        throw new Error("Error obtiendo productos")
+        throw new Error("Error obtiendo productos.s")
     }
 }
 
@@ -68,7 +68,7 @@ export const patchProductBack = async (productId, {salePriceKilo, urls}) => {
     if (response.ok) {
         return response.json();
     } else {
-        throw new Error("Error actualizando el producto")
+        throw new Error("Error actualizando el producto.")
     }
 }
 
@@ -79,6 +79,6 @@ export const deleteProductBack = async (productId) => {
     if (response.ok) {
         return response.json();
     } else {
-        throw new Error("Error eliminando el producto")
+        throw new Error("Error eliminando el producto.")
     }
 }

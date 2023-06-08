@@ -1,12 +1,13 @@
 import { Formik, Form } from "formik";
 import TextInput from "./TextInput";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { updateProduct } from "../features/products/productSlice";
 import { postPurchaseBack } from "../services/products.service";
 import { Card, CardMedia, CardContent, Typography, Button } from "@mui/material";
+import Loader from "./Loader";
 
 
 const validate = (values) => {
@@ -39,22 +40,30 @@ const EditProduct = () => {
     const [product, setProduct] = useLocalStorage("product","");
     const dispatch = useDispatch();
     const products = useSelector(state => state.products);
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     
     const navigate = useNavigate();
     const { productId = ""} = useParams();
 
 
     const handleSubmit = async (values) => {
-        // const data = new FormData();
-
-        // if (values.salePriceKilo) {
-        //     data.append("salePriceKilo", values.salePriceKilo);
-        // }
-
-        const resp = await postPurchaseBack(productId, {purchaseDate:values.purchaseDate, weight:values.weight, purchasePriceKilo:values.purchasePriceKilo});        dispatch(updateProduct(resp));
-        // setProduct(resp)
-
-        navigate(-1); //Para volver a la página anterior
+        setLoading(true);
+        let errorOCurred = false;
+        try {
+            const resp = await postPurchaseBack(productId, {purchaseDate:values.purchaseDate, weight:values.weight, purchasePriceKilo:values.purchasePriceKilo});        
+            dispatch(updateProduct(resp));
+            navigate(-1); //Para volver a la página anterior
+        } catch (error) {
+            console.log(error.message);
+            setErrorMessage(error.message);
+            errorOCurred = true;
+        } finally {
+            if (!errorOCurred) {
+                setLoading(false);
+            }
+        }
+        
     }
 
     useEffect(() => {
@@ -64,6 +73,10 @@ const EditProduct = () => {
         }
     }, [productId, products]);
 
+    const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
+        setLoading(false);
+        setErrorMessage("");
+    }
 
     return (
         <>
@@ -99,6 +112,8 @@ const EditProduct = () => {
                             </Formik>
                         </CardContent> 
                     </Card>
+                    {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
+
                 </div>
             )}
             {product.id == undefined && products.length === 0 ? alert("Se produjo un error al guardar los datos.") : null}

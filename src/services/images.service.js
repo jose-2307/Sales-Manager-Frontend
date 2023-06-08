@@ -14,6 +14,6 @@ export const submitImage = async (image) => {
     if (response.ok) {
         return response.json();
     } else {
-        throw new Error("Error subiendo la imágen")
+        throw new Error("Error subiendo la imágen.")
     }
 }

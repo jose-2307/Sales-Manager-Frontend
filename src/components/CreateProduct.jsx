@@ -4,9 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { postProductBack } from "../services/products.service";
 import { submitImage } from "../services/images.service";
 import { Card, CardMedia, CardContent, Typography, Button } from "@mui/material";
-import Cookies from "universal-cookie";
+import { useState } from "react";
+import Loader from "./Loader";
 
-const cookies = new Cookies();
+
 
 const validate = (values) => {
     const errors = {};
@@ -31,23 +32,40 @@ const validate = (values) => {
 
 
 const CreateProduct = () => {
-    
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
     const { id = ""} = useParams();
 
 
     const handleSubmit = async (values) => {
-        const urls = [];
-        if (values.file) {
-            const img = await submitImage(values.file);
-            urls.push(img.url);
-        }
+        setLoading(true);
+        let errorOCurred = false;
+        try {
+            const urls = [];
+            if (values.file) {
+                const img = await submitImage(values.file);
+                urls.push(img.url);
+            }
 
-        await postProductBack(id, {name: values.name, salePriceKilo: values.salePriceKilo, urls });        
-        
-        navigate(-1); //Para volver a la página anterior
+            await postProductBack(id, {name: values.name, salePriceKilo: values.salePriceKilo, urls });        
+            
+            navigate(-1); //Para volver a la página anterior
+        } catch (error) {
+            console.log(error.message);
+            setErrorMessage(error.message);
+            errorOCurred = true;
+        } finally {
+            if (!errorOCurred) {
+                setLoading(false);
+            }
+        }
     }
 
+    const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
+        setLoading(false);
+        setErrorMessage("");
+    }
 
     return (
         <>          
@@ -85,7 +103,7 @@ const CreateProduct = () => {
                                             cursor: "pointer",
                                         }}
                                     >Seleccionar imagen</label>
-                                    <input id="image" name="file" type="file" accept=".jpg, .png" onChange= {(e) => {
+                                    <input id="image" name="file" type="file" accept=".jpg, .png, .jpeg" onChange= {(e) => {
                                             formProps.setFieldValue("file", e.target.files[0]);
                                             const fileName = document.getElementById("file-name");
                                             fileName.textContent = e.target.files[0].name
@@ -102,6 +120,9 @@ const CreateProduct = () => {
                         </Formik>
                     </CardContent> 
                 </Card>
+                {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
+
+
             </div>
         </>
     )

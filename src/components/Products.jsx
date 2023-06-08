@@ -14,6 +14,8 @@ const Products = () => {
     const [openProductModal, setOpenProductModal] = useState(null); //Controla que se abra el modal del producto asociado
     const [count, setCount] = useState(0); //Controla la cantidad de productos encontrados
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
 
 
     const dispatch = useDispatch();
@@ -30,6 +32,7 @@ const Products = () => {
 
     useEffect(() => {
         setLoading(true);
+        let errorOCurred = false;
         if (id === "") return 
         const fetchProducts = async () => {
             try {
@@ -43,8 +46,12 @@ const Products = () => {
                 setCount(data.length);
             } catch (error) {
                 console.log(error.message);
+                setErrorMessage(error.message);
+                errorOCurred = true;
             } finally {
-                setLoading(false);
+                if (!errorOCurred) {
+                    setLoading(false);
+                }
             }
         }
         fetchProducts();       
@@ -53,20 +60,29 @@ const Products = () => {
     
     //Elemina un producto
     const handleDelete = async id => {
-        await deleteProductBack(id);
-        dispatch(deleteProduct(id));
-        setCount(count - 1);
+        setLoading(true);
+        let errorOCurred = false;
+        try {
+            await deleteProductBack(id);
+            dispatch(deleteProduct(id));
+            setCount(count - 1);
+        } catch (error) {
+            console.log(error.message);
+            setErrorMessage(error.message);
+            errorOCurred = true;
+        } finally {
+            if (!errorOCurred) {
+                setLoading(false);
+            }
+        }
+        
     }
 
-    // if (products[0] != undefined && "id" in products[0]) {
-    //     console.log(products[0].id)
-    //     products = products[0].data
-    // }
-    
+    const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
+        setLoading(false);
+        setErrorMessage("");
+    }
 
-    // const handleModal = (productId) => {
-    //     setEditProduct(productId);
-    // }
     if (!products) return <></>
     return (
         <section>
@@ -138,8 +154,7 @@ const Products = () => {
                                                 </Fade>
                                             </Modal>
                                         )}
-                                        {loading && (<Loader></Loader>)}
-
+                                        {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
                                     </div>
                                 </section> 
                             </div>
