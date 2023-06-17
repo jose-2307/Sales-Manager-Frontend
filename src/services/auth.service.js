@@ -24,7 +24,7 @@ export const loginBack = async ({email, password}) => {
 }
 
 
-export const fetchWrapper = async (endpoint, options = {}) => { //Utilizado para ejecutar el refresh token a cada petición
+export const fetchWrapper = async (endpoint, options = {}) => { //Utilizado para ejecutar el refresh token en cada petición
 
     const accessToken = cookies.get("accessToken");
     if (accessToken) { //Agrega el access token
