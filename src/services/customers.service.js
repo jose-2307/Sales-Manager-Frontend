@@ -10,3 +10,24 @@ export const getRebtors = async () => {
         throw new Error("Error obtiendo deudores.")
     }
 }
+
+
+export const updateRebtors = async (customerId, orderId, {paymentDate, paidOut, subscriber}) => {
+    const response = await fetchWrapper(`${ENDPOINT}/customer/${customerId}/purchase-order/${orderId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            paymentDate,
+            paidOut,
+            subscriber
+        }),
+    });
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error("Error registrando el pago.")
+    }
+
+}

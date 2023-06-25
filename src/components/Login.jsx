@@ -29,7 +29,6 @@ const Login = () => {
         let errorOCurred = false;
         try {
             const login = await loginBack({email: values.email, password: values.password});
-            console.log(login);
             dispatch(addUser(login.user));
             //cookies
             const cookies = new Cookies();
