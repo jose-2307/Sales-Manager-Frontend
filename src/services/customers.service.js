@@ -2,8 +2,8 @@ import { fetchWrapper } from "./auth.service";
 
 const ENDPOINT = "http://localhost:8000/api/v1/profile";
 
-export const getRebtors = async () => {
-    const response = await fetchWrapper(`${ENDPOINT}/rebtors`);
+export const getDebtorsBack = async () => {
+    const response = await fetchWrapper(`${ENDPOINT}/debtors`);
     if(response.ok) {
         return response.json();
     } else {
@@ -12,7 +12,7 @@ export const getRebtors = async () => {
 }
 
 
-export const updateRebtors = async (customerId, orderId, {paymentDate, paidOut, subscriber}) => {
+export const updateDebtorsBack = async (customerId, orderId, {paymentDate, paidOut, subscriber}) => {
     const response = await fetchWrapper(`${ENDPOINT}/customer/${customerId}/purchase-order/${orderId}`, {
         method: "PATCH",
         headers: {

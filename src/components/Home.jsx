@@ -8,10 +8,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button, InputAdornment, TextField } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { getRebtors, updateRebtors } from '../services/customers.service';
+import { getDebtorsBack, updateDebtorsBack } from '../services/customers.service';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addReborts } from '../features/reborts/rebortSlice';
+import { addDebtors, deleteDebtors, updateDebtor } from '../features/debtors/debtorSlice';
 import Loader from './Loader';
 
 
@@ -44,7 +44,7 @@ const Home = () => {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const dispatch = useDispatch();
-    const reborts = useSelector(state => state.reborts);
+    const debtors = useSelector(state => state.debtors);
     const [formValues, setFormValues] = useState({});
     const [validationError, setValidationError] = useState(false); //Valida el contenido del input
     const [blockButton, setBlockButton] = useState(false); //Bloquea el botón en caso de no ser válido
@@ -55,11 +55,11 @@ const Home = () => {
     useEffect(() => {
         setLoading(true);
         let errorOCurred = false;
-        const fetchReborts = async () => {
+        const fetchDebtors = async () => {
             try {
-                const data = await getRebtors();
+                const data = await getDebtorsBack();
                 // console.log(data);
-                dispatch(addReborts(data));
+                dispatch(addDebtors(data));
             } catch (error) {
                 console.log(error.message);
                 setErrorMessage(error.message);
@@ -70,9 +70,8 @@ const Home = () => {
                 }
             }
         }
-        fetchReborts();
+        fetchDebtors();
     }, [dispatch]);
-    console.log(reborts)
 
 
     const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
@@ -176,9 +175,34 @@ const Home = () => {
 
             const format = toFormat(data); //Se le da un formato utilizable a la información
             
-            // for (let x of format) {
-            //     await updateRebtors(x.id,);
-            // }
+            for (let f of format) {
+                const debtor = debtors[0].find(x => x.id == f.id);
+                let accum = f.subscriber ? f.subscriber : null;
+                for (let p of debtor.purchaseOrders) {
+                    const fecha = new Date();
+                    if ("check" in f) {
+                        //Se paga completo
+                        console.log("Se paga completo")
+                        await updateDebtorsBack(f.id, p.id, { paymentDate: fecha, paidOut: true });
+                        dispatch(deleteDebtors(f.id));
+                    } else {
+                        if (p.orderDebt <= accum) {
+                            console.log("Queda pagada la orden de compra")
+                            await updateDebtorsBack(f.id, p.id, { paymentDate: fecha, paidOut: true });
+                            dispatch(updateDebtor(f.id, p.id));
+                            accum -= p.orderDebt;
+                        } else {
+                            console.log("Queda como abono");
+                            await updateDebtorsBack(f.id, p.id, { subscriber: accum });
+                            accum = 0;
+                        }
+                        if (accum === 0) {
+                            console.log("Cuenta pagada")
+                            break;
+                        }
+                    }
+                }
+            }
 
 
             console.log(format)
@@ -198,7 +222,7 @@ const Home = () => {
         <div style={{padding: "30px"}}>
             <h3>Deudores</h3>
             <br></br>
-            {reborts.length === 0 
+            {debtors[0].length === 0 
                 ? <h3>No hay deudores</h3>
                 : (
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
@@ -214,7 +238,7 @@ const Home = () => {
                                 </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                {reborts[0].map(row => (
+                                {debtors[0].map(row => (
                                     <StyledTableRow key={row.id}>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.name}>{row.name}</StyledTableCell>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.location}>{row.location}</StyledTableCell>
