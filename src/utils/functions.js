@@ -75,7 +75,7 @@ export const dateTransform = (date) => {
 
     months.forEach(x => {
         if (parseInt(dateSplit[1]) === x.number) {
-            resp += ` de ${x.name} de `
+            resp += ` ${x.name} `
         }
     });
     resp += dateSplit[0];

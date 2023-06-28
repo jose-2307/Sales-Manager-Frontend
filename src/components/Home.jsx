@@ -244,7 +244,7 @@ const Home = () => {
                                     <StyledTableRow key={row.id}>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.name}>{row.name}</StyledTableCell>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.location}>{row.location}</StyledTableCell>
-                                        <StyledTableCell component="th" scope="row" align="center" key={row.debt}>{formatNumber(row.debt)}</StyledTableCell>
+                                        <StyledTableCell component="th" scope="row" align="center" key={row.debt}>{`$ ${formatNumber(row.debt)}`}</StyledTableCell>
                                         <StyledTableCell align="center">
                                             <input
                                                 style={{width: "16px", height: "16px"}}
@@ -280,7 +280,6 @@ const Home = () => {
                                                 Ver detalle
                                             </Button>
                                         </StyledTableCell>
-                                        {console.log(row)}
                                         {openDetailModal === row.id && ( // Controla que el modal a abrir sea el del producto asociado según el botón cliqueado
                                             <Modal
                                                 aria-labelledby="transition-modal-title"
@@ -305,30 +304,68 @@ const Home = () => {
                                                         bgcolor: 'background.paper',
                                                         border: '2px solid #000',
                                                         boxShadow: 24,
-                                                        p: 6,}}
-                                                    >   
-                                                        {row.purchaseOrders.map(order => (
-                                                            <>
-                                                                <Typography id="transition-modal-title" variant="h6" component="h2">
-                                                                    {`Fecha de venta: ${dateTransform(order.saleDate)}`}
-                                                                </Typography>
-                                                                <Typography id="transition-modal-description" sx={{ mt: 2 }}>{`Monto total: $ ${formatNumber(order.orderDebt)}`}</Typography>
-                                                                <Typography id="transition-modal-description" variant="h6" component="h2">{`Monto abonado: $ ${formatNumber(order.subscriber)}`}</Typography>
-
-                                                                {order.purchaseOrderProducts.map(p => (
-                                                                    <>
-                                                                        <Typography id="transition-modal-description" sx={{ mt: 2 }}>{`Producto: ${p.productName[0].toUpperCase().concat(p.productName.slice(1))}`}</Typography>
-                                                                        <Typography id="transition-modal-description" sx={{ mt: 2 }}>{`Cantidad: ${formatNumber(p.weight)}`}</Typography>
-                                                                        <Typography id="transition-modal-description" sx={{ mt: 2 }}>{`Precio: $ ${formatNumber(parseInt(p.weight) * parseInt(p.priceKilo)/1000)}`}</Typography>
-                                                                    </>
-                                                                ))}
-                                                                
-                                                            </>
-                                                            
-                                                        ))}
+                                                        p: 4,
+                                                        overflowY: "auto",
+                                                        height: 400,
                                                         
+                                                    }}>
+
+                                                        {row.purchaseOrders.map((order, i) => (
+                                                            <>  
+                                                                <Typography id="transition-modal-title" style={{color: "grey", fontSize: "14px", paddingBottom: "4px", paddingLeft:"8px"}} key={order.id *0.25}>
+                                                                    Fecha
+                                                                </Typography>
+                                                                <Typography id="transition-modal-title" style={{paddingBottom: "6px", paddingLeft:"8px"}} key={order.id}>
+                                                                    {dateTransform(order.saleDate)}
+                                                                </Typography>
+                                                                {order.purchaseOrderProducts.map(p => (
+                                                                    <section key={p.productName} style={{
+                                                                        display: "flex",
+                                                                        flexDirection: "row",
+                                                                        justifyContent: "space-between",
+                                                                        backgroundColor: "#f2f2f2" 
+                                                                        
+                                                                    }}>
+                                                                        <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px" }} >
+                                                                            {`${p.productName[0].toUpperCase().concat(p.productName.slice(1))} `} {`(${formatNumber(p.weight)} g)`}
+                                                                        </Typography>
+                                                                        <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} >{`$ ${formatNumber(parseInt(p.weight) * parseInt(p.priceKilo)/1000)}`}</Typography>
+                                                                    </section>
+                                                                ))}
+                                                                {order.subscriber != 0 && (
+                                                                    <section style={{
+                                                                        display: "flex",
+                                                                        flexDirection: "row",
+                                                                        justifyContent: "space-between",
+                                                                        backgroundColor: "#f2f2f2",
+                                                                        paddingBottom: "14px"
+                                                                    }}>
+                                                                        <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px" }} key={order.subscriber + 1}>Abono</Typography>
+                                                                        <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} key={order.subscriber}>{`$ ${formatNumber(order.subscriber)}`}</Typography>
+                                                                    </section>
+                                                                )}
+                                                                <section style={{
+                                                                    display: "flex",
+                                                                    flexDirection: "row",
+                                                                    justifyContent: "space-between",
+                                                                }}>
+                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px"  }} key={order.orderDebt + 1}><b>Total</b></Typography>
+                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} key={order.orderDebt}><b>{`$ ${formatNumber(order.orderDebt)}`}</b></Typography>
+                                                                </section>
+                                                                <br></br>
+                                                                {i != row.purchaseOrders.length - 1 && (
+                                                                    <>
+                                                                        <div style={{color: "#bfb8b8", fontSize: "20px"}} >- - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+                                                                        <br></br>
+
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        ))}
                                                         <br></br>
-                                                        <Button variant="contained" style={{marginRight: "12%", marginLeft: "16%", backgroundColor: "grey"}} onClick={() => setOpen(false)}>Cerrar</Button>
+                                                        <Button variant="contained" style={{position: "absolute", right: "170px"}} onClick={() => setOpen(false)}>Cerrar</Button>
+                                                        <br></br>
+                                                        
                                                     </Box>
                                                 </Fade>
                                             </Modal>
