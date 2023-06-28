@@ -20,6 +20,7 @@ export const debtorSlice = createSlice({
         addDebtors: (state, action) => {
             for (let element of action.payload) {
                 element.name = nameTransform(element.name);
+                element.purchaseOrders.sort((a,b) => a.id - b.id); //Ordena las órdenes de compra según su id
             }
             state.push(action.payload); 
         },

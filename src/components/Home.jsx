@@ -6,13 +6,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button, InputAdornment, TextField } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Backdrop, Box, Button, Fade, InputAdornment, Modal, TextField, Typography } from '@mui/material';
 import { getDebtorsBack, updateDebtorsBack } from '../services/customers.service';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addDebtors, deleteDebtors, updateDebtor } from '../features/debtors/debtorSlice';
 import Loader from './Loader';
+import { dateTransform, formatNumber } from '../utils/functions';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -50,6 +50,9 @@ const Home = () => {
     const [blockButton, setBlockButton] = useState(false); //Bloquea el botón en caso de no ser válido
     const [selectedRows, setSelectedRows] = useState({}); //Controla los checkboxes seleccionados en cada fila para deshabilitar el input correspondiente. Además, se utiliza para visibilizar el botón de guardar 
     const [inputRows, setInputRows] = useState({}); //Permite visibilizar el botón de guardar al ingresar datos 
+    const [openDetailModal, setOpenDetailModal] = useState(null); //Controla que se abra el modal del deudor asociado
+    const [open, setOpen] = useState(false); //Controla el abrir y cerrar del modal
+
 
 
     useEffect(() => {
@@ -58,7 +61,6 @@ const Home = () => {
         const fetchDebtors = async () => {
             try {
                 const data = await getDebtorsBack();
-                // console.log(data);
                 dispatch(addDebtors(data));
             } catch (error) {
                 console.log(error.message);
@@ -194,6 +196,7 @@ const Home = () => {
                         } else {
                             console.log("Queda como abono");
                             await updateDebtorsBack(f.id, p.id, { subscriber: accum });
+                            //dispatch();
                             accum = 0;
                         }
                         if (accum === 0) {
@@ -217,12 +220,11 @@ const Home = () => {
         }
     };
 
-
     return (
         <div style={{padding: "30px"}}>
             <h3>Deudores</h3>
             <br></br>
-            {debtors[0].length === 0 
+            {debtors.length === 0 || debtors[0].length === 0 
                 ? <h3>No hay deudores</h3>
                 : (
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
@@ -242,7 +244,7 @@ const Home = () => {
                                     <StyledTableRow key={row.id}>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.name}>{row.name}</StyledTableCell>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.location}>{row.location}</StyledTableCell>
-                                        <StyledTableCell component="th" scope="row" align="center" key={row.debt}>{row.debt}</StyledTableCell>
+                                        <StyledTableCell component="th" scope="row" align="center" key={row.debt}>{formatNumber(row.debt)}</StyledTableCell>
                                         <StyledTableCell align="center">
                                             <input
                                                 style={{width: "16px", height: "16px"}}
@@ -271,17 +273,72 @@ const Home = () => {
                                         </StyledTableCell>
                                         
                                         <StyledTableCell align="center">
-                                            <Button>
-                                                <Link to={`/details/${row.id}`}>
+                                            <Button onClick={() => {setOpenDetailModal(row.id); setOpen(true)}}>
+                                                {/* <Link to={`/details/${row.id}`} target="_blank">
                                                     Ver detalle
-                                                </Link>
+                                                </Link> */}
+                                                Ver detalle
                                             </Button>
                                         </StyledTableCell>
+                                        {console.log(row)}
+                                        {openDetailModal === row.id && ( // Controla que el modal a abrir sea el del producto asociado según el botón cliqueado
+                                            <Modal
+                                                aria-labelledby="transition-modal-title"
+                                                aria-describedby="transition-modal-description"
+                                                open={open} 
+                                                onClose={() => {setOpenDetailModal(null); setOpen(false)}}
+                                                closeAfterTransition
+                                                slots={{ backdrop: Backdrop }}
+                                                slotProps={{
+                                                backdrop: {
+                                                    timeout: 500,
+                                                },
+                                                }}
+                                            >
+                                                <Fade in={open}>
+                                                    <Box sx={{
+                                                        position: "absolute",
+                                                        top: '50%',
+                                                        left: '50%',
+                                                        transform: 'translate(-50%, -50%)',
+                                                        width: 400,
+                                                        bgcolor: 'background.paper',
+                                                        border: '2px solid #000',
+                                                        boxShadow: 24,
+                                                        p: 6,}}
+                                                    >   
+                                                        {row.purchaseOrders.map(order => (
+                                                            <>
+                                                                <Typography id="transition-modal-title" variant="h6" component="h2">
+                                                                    {`Fecha de venta: ${dateTransform(order.saleDate)}`}
+                                                                </Typography>
+                                                                <Typography id="transition-modal-description" sx={{ mt: 2 }}>{`Monto total: $ ${formatNumber(order.orderDebt)}`}</Typography>
+                                                                <Typography id="transition-modal-description" variant="h6" component="h2">{`Monto abonado: $ ${formatNumber(order.subscriber)}`}</Typography>
+
+                                                                {order.purchaseOrderProducts.map(p => (
+                                                                    <>
+                                                                        <Typography id="transition-modal-description" sx={{ mt: 2 }}>{`Producto: ${p.productName[0].toUpperCase().concat(p.productName.slice(1))}`}</Typography>
+                                                                        <Typography id="transition-modal-description" sx={{ mt: 2 }}>{`Cantidad: ${formatNumber(p.weight)}`}</Typography>
+                                                                        <Typography id="transition-modal-description" sx={{ mt: 2 }}>{`Precio: $ ${formatNumber(parseInt(p.weight) * parseInt(p.priceKilo)/1000)}`}</Typography>
+                                                                    </>
+                                                                ))}
+                                                                
+                                                            </>
+                                                            
+                                                        ))}
+                                                        
+                                                        <br></br>
+                                                        <Button variant="contained" style={{marginRight: "12%", marginLeft: "16%", backgroundColor: "grey"}} onClick={() => setOpen(false)}>Cerrar</Button>
+                                                    </Box>
+                                                </Fade>
+                                            </Modal>
+                                        )}
                                     </StyledTableRow>
                                 ))}
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                        
                         {
                             Object.values(inputRows).some((value) => value !== "") || Object.values(selectedRows).some((selected) => selected) //La segunda condición verifica si al menos 1 de los checkboxes han sido seleccionados
                             ? (
