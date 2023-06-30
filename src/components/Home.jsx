@@ -9,8 +9,6 @@ import Paper from '@mui/material/Paper';
 import { Backdrop, Box, Button, Fade, InputAdornment, Modal, TextField, Typography } from '@mui/material';
 import { getDebtorsBack, updateDebtorsBack } from '../services/customers.service';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addDebtors, deleteDebtors, updateDebtor } from '../features/debtors/debtorSlice';
 import Loader from './Loader';
 import { dateTransform, formatNumber } from '../utils/functions';
 
@@ -43,8 +41,7 @@ const headers = ["Nombre", "Ubicación", "Deuda", "Confirmación de pago", "Abon
 const Home = () => {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const dispatch = useDispatch();
-    const debtors = useSelector(state => state.debtors);
+    const [debtors, setDebtors] = useState([]);
     const [formValues, setFormValues] = useState({});
     const [validationError, setValidationError] = useState(false); //Valida el contenido del input
     const [blockButton, setBlockButton] = useState(false); //Bloquea el botón en caso de no ser válido
@@ -53,7 +50,15 @@ const Home = () => {
     const [openDetailModal, setOpenDetailModal] = useState(null); //Controla que se abra el modal del deudor asociado
     const [open, setOpen] = useState(false); //Controla el abrir y cerrar del modal
 
-
+    const nameTransform = (name) => {
+        let array = name.split(" ");
+        let result = "";
+        array.forEach(x => {
+            result += " "
+            result += x[0].toUpperCase().concat(x.slice(1));
+        });
+        return result;
+    }
 
     useEffect(() => {
         setLoading(true);
@@ -61,7 +66,11 @@ const Home = () => {
         const fetchDebtors = async () => {
             try {
                 const data = await getDebtorsBack();
-                dispatch(addDebtors(data));
+                for (let element of data) {
+                    element.name = nameTransform(element.name);
+                    element.purchaseOrders.sort((a,b) => a.id - b.id); //Ordena las órdenes de compra según su id
+                }
+                setDebtors(data);
             } catch (error) {
                 console.log(error.message);
                 setErrorMessage(error.message);
@@ -73,8 +82,7 @@ const Home = () => {
             }
         }
         fetchDebtors();
-    }, [dispatch]);
-
+    }, [setDebtors]);
 
     const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
         setLoading(false);
@@ -97,13 +105,13 @@ const Home = () => {
 
       }
     
-    const handleInputChange = (event, rowId) => {
+    const handleInputChange = (event, rowId, debt) => {
         const { name, value } = event.target;
+        let hasError = false;
 
-        // setInputValue(value);
-
-        const sanitizedValue = Math.max(0, Number(value)); //Convierte a número y asegura que no sea menor o igual a 0
-        const hasError = sanitizedValue !== Number(value); //Verifica si se realizó una corrección
+        if (parseInt(value) <= 0 || parseInt(value) > parseInt(debt)) { //Valida el dato
+            hasError = true;
+        }
 
         setFormValues((prevFormValues) => ({
             ...prevFormValues,
@@ -178,37 +186,68 @@ const Home = () => {
             const format = toFormat(data); //Se le da un formato utilizable a la información
             
             for (let f of format) {
-                const debtor = debtors[0].find(x => x.id == f.id);
+                const debtor = debtors.find(x => x.id == f.id);
                 let accum = f.subscriber ? f.subscriber : null;
                 for (let p of debtor.purchaseOrders) {
                     const fecha = new Date();
-                    if ("check" in f) {
+                    if ("check" in f) { //Se borra el deudor
                         //Se paga completo
                         console.log("Se paga completo")
                         await updateDebtorsBack(f.id, p.id, { paymentDate: fecha, paidOut: true });
-                        dispatch(deleteDebtors(f.id));
+                        setDebtors(prevDebtors => prevDebtors.filter(debtor => debtor.id != f.id));
                     } else {
-                        if (p.orderDebt <= accum) {
+                        if (p.orderDebt <= accum) { //Se borra la orden de compra del deudor
                             console.log("Queda pagada la orden de compra")
                             await updateDebtorsBack(f.id, p.id, { paymentDate: fecha, paidOut: true });
-                            dispatch(updateDebtor(f.id, p.id));
+                            let orderDebt;
+                            const updateDebtors = debtors.map(debtor => {
+                                if (debtor.id == f.id) {
+                                    debtor.purchaseOrders.forEach(order => {
+                                        if (order.id == p.id) orderDebt = p.orderDebt;
+                                    });
+                                    const updatedPurchaseOrders = debtor.purchaseOrders.filter(
+                                        order => order.id != p.id
+                                    );
+                                    return { ...debtor, debt: parseInt(debtor.debt) - parseInt(orderDebt), purchaseOrders: updatedPurchaseOrders };
+                                }
+                                return debtor;
+                            });
+
+                            setDebtors(updateDebtors);
+                            console.log(debtors);
                             accum -= p.orderDebt;
-                        } else {
+                        } else { //Se actualiza el subscriber de la orden de compra del deudor
                             console.log("Queda como abono");
                             await updateDebtorsBack(f.id, p.id, { subscriber: accum });
-                            //dispatch();
+                            const updateDebtors = debtors.map(debtor => {
+                                if (debtor.id == f.id) {
+                                    const updatedPurchaseOrders = debtor.purchaseOrders.map(order => {
+                                        if (order.id == p.id) {
+                                          return { ...order, 
+                                            orderDebt: parseInt(order.orderDebt) - parseInt(accum), 
+                                            subscriber: parseInt(order.subscriber) + parseInt(accum) 
+                                            };
+                                        }
+                                        return order;
+                                    });
+                                    return { ...debtor, debt: parseInt(debtor.debt) - parseInt(accum), purchaseOrders: updatedPurchaseOrders };
+                                }
+                                return debtor;
+                            });
+                            setDebtors(updateDebtors);
                             accum = 0;
                         }
                         if (accum === 0) {
-                            console.log("Cuenta pagada")
+                            console.log("Abono pagado")
                             break;
                         }
                     }
                 }
             }
-
-
-            console.log(format)
+            //Se limpia el formulario
+            setFormValues({});
+            setSelectedRows({});
+            setInputRows({});
         } catch (error) {
             console.log(error.message);
             setErrorMessage(error.message);
@@ -224,7 +263,7 @@ const Home = () => {
         <div style={{padding: "30px"}}>
             <h3>Deudores</h3>
             <br></br>
-            {debtors.length === 0 || debtors[0].length === 0 
+            {debtors.length === 0 
                 ? <h3>No hay deudores</h3>
                 : (
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
@@ -240,7 +279,7 @@ const Home = () => {
                                 </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                {debtors[0].map(row => (
+                                {debtors.map(row => (
                                     <StyledTableRow key={row.id}>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.name}>{row.name}</StyledTableCell>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.location}>{row.location}</StyledTableCell>
@@ -267,20 +306,17 @@ const Home = () => {
                                                 }}
                                                 disabled={selectedRows[row.id]}
                                                 value={selectedRows[row.id] ? "" : formValues[`subscriber-${row.id}`]?.value || ""}
-                                                onChange={(e) => handleInputChange(e, row.id)}
-                                                helperText={validationError[`subscriber-${row.id}`] && <p>Error: El valor debe ser mayor que 0.</p>}
+                                                onChange={(e) => handleInputChange(e, row.id, row.debt)}
+                                                helperText={validationError[`subscriber-${row.id}`] && <p>Error: El valor debe ser mayor que 0 y menor o igual a la deuda.</p>}
                                             />
                                         </StyledTableCell>
                                         
                                         <StyledTableCell align="center">
                                             <Button onClick={() => {setOpenDetailModal(row.id); setOpen(true)}}>
-                                                {/* <Link to={`/details/${row.id}`} target="_blank">
-                                                    Ver detalle
-                                                </Link> */}
                                                 Ver detalle
                                             </Button>
                                         </StyledTableCell>
-                                        {openDetailModal === row.id && ( // Controla que el modal a abrir sea el del producto asociado según el botón cliqueado
+                                        {openDetailModal === row.id && ( // Controla que el modal a abrir sea el del producto asociado según el botón cliqueado                                            
                                             <Modal
                                                 aria-labelledby="transition-modal-title"
                                                 aria-describedby="transition-modal-description"
@@ -333,7 +369,7 @@ const Home = () => {
                                                                     </section>
                                                                 ))}
                                                                 {order.subscriber != 0 && (
-                                                                    <section style={{
+                                                                    <section key={order.subscriber} style={{
                                                                         display: "flex",
                                                                         flexDirection: "row",
                                                                         justifyContent: "space-between",
@@ -357,7 +393,6 @@ const Home = () => {
                                                                     <>
                                                                         <div style={{color: "#bfb8b8", fontSize: "20px"}} >- - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
                                                                         <br></br>
-
                                                                     </>
                                                                 )}
                                                             </>

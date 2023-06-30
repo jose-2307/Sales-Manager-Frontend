@@ -30,14 +30,20 @@ export const debtorSlice = createSlice({
             state.splice(state.indexOf(debtor), 1);
         },
         updateDebtor: (state, action) => {
-            const { id, orderId } = action.payload;
-            const debtor = state.find(x => id == x.id);
-            const resp = debtor.purchaseOrders.find(x => orderId == x.id);
-            debtor.purchaseOrders.splice(debtor.purchaseOrders.indexOf(resp), 1);
-            // state = state.map(x => {
+            const { id, orderId, subscriber } = action.payload;
+            console.log(id,orderId,subscriber)
 
-            // })
-            
+            const debtor = state[0].find(x => id == x.id);
+            const order = debtor.purchaseOrders.find(x => orderId == x.id);
+            if (subscriber) {
+                console.log("Subscriber")
+                const total = parseInt(order.subscriber) + parseInt(subscriber);
+                order.subscriber = total;
+                //guardarlo en el state
+
+            } else {
+                debtor.purchaseOrders.splice(debtor.purchaseOrders.indexOf(order), 1);
+            }  
         } 
     }
 });
