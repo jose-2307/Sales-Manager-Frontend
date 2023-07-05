@@ -50,7 +50,7 @@ export const getProductsBack = async (categoryId) => {
     if(response.ok) {
         return response.json();
     } else {
-        throw new Error("Error obtiendo productos.s")
+        throw new Error("Error obtiendo productos.")
     }
 }
 

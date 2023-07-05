@@ -11,7 +11,6 @@ export const getDebtorsBack = async () => {
     }
 }
 
-
 export const updateDebtorsBack = async (customerId, orderId, {paymentDate, paidOut, subscriber}) => {
     const response = await fetchWrapper(`${ENDPOINT}/customer/${customerId}/purchase-order/${orderId}`, {
         method: "PATCH",
@@ -29,5 +28,13 @@ export const updateDebtorsBack = async (customerId, orderId, {paymentDate, paidO
     } else {
         throw new Error("Error registrando el pago.")
     }
+}
 
+export const getCustomersBack = async () => {
+    const response = await fetchWrapper(`${ENDPOINT}/customer`);
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error("Error cargando los clientes.");
+    }
 }

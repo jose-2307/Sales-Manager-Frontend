@@ -77,7 +77,7 @@ const EditProduct = () => {
     return (
         <>
             {product.id == productId && (
-                <div style={{display: "grid", placeItems: "center"}}>
+                <div style={{display: "grid", placeItems: "center", height: "90vh"}}>
                     <Card sx={{ maxWidth: 345 }}>
                         <CardMedia 
                             component="img"

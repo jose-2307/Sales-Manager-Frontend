@@ -11,6 +11,8 @@ import { getDebtorsBack, updateDebtorsBack } from '../services/customers.service
 import { useEffect, useState } from 'react';
 import Loader from './Loader';
 import { dateTransform, formatNumber } from '../utils/functions';
+import { Link } from 'react-router-dom';
+import "./styles/NewPurchaseOrder.css";
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -208,16 +210,19 @@ const Home = () => {
                                     const updatedPurchaseOrders = debtor.purchaseOrders.filter(
                                         order => order.id != p.id
                                     );
+                                    // return { ...debtor, debt: parseInt(debtor.debt) - parseInt(orderDebt), purchaseOrders: updatedPurchaseOrders };
                                     return { ...debtor, debt: parseInt(debtor.debt) - parseInt(orderDebt), purchaseOrders: updatedPurchaseOrders };
                                 }
                                 return debtor;
                             });
-
+                            console.log(updateDebtors);
                             setDebtors(updateDebtors);
                             console.log(debtors);
                             accum -= p.orderDebt;
                         } else { //Se actualiza el subscriber de la orden de compra del deudor
                             console.log("Queda como abono");
+                            console.log(debtors);
+                            
                             await updateDebtorsBack(f.id, p.id, { subscriber: accum });
                             const updateDebtors = debtors.map(debtor => {
                                 if (debtor.id == f.id) {
@@ -248,6 +253,7 @@ const Home = () => {
             setFormValues({});
             setSelectedRows({});
             setInputRows({});
+            location.reload();
         } catch (error) {
             console.log(error.message);
             setErrorMessage(error.message);
@@ -262,6 +268,9 @@ const Home = () => {
     return (
         <div style={{padding: "30px"}}>
             <h3>Deudores</h3>
+            <Link className="purchaseOrderButton" to="/create-purchase-order">
+                Registrar venta<img src="../../icons/registrar.png"/>
+            </Link>
             <br></br>
             {debtors.length === 0 
                 ? <h3>No hay deudores</h3>

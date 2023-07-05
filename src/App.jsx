@@ -11,29 +11,28 @@ import SignUp from './components/SignUp';
 import RecoveryPassword from './components/RecoveryPassword';
 import ChangePassword from './components/ChangePassword';
 import Analysis from './components/Analysis';
+import CreatePurchaseOrder from './components/CreatePurchaseOrder';
 
 
 const App = () => {
   return(
-    <>
     <BrowserRouter>
-      <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />}/>
-          <Route path="/categories" element={<Categories />}/>
-          <Route path="/categories/:id" element={<Products />}/>
-          <Route path="/categories/:id/edit-product/:productId" element={<EditProduct />}/>
-          <Route path="/categories/:id/create-purchase/:productId" element={<CreatePurchase />}/>
-          <Route path="/categories/:id/create-product" element={<CreateProduct />}/>
-          <Route path="/login" element={<Login />}/>
-          <Route path="/sign-up" element={<SignUp />}/>
-          <Route path="/recovery-password" element={<RecoveryPassword />}/>
-          <Route path="/analysis" element={<Analysis />}/>
-          <Route path="/change-password" element={<ChangePassword />}/>
-          <Route path="*" element={"404: ruta no encontrada"} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Navbar><Home /></Navbar>}/>
+        <Route path="/create-purchase-order" element={<Navbar><CreatePurchaseOrder /></Navbar>}/>
+        <Route path="/categories" element={<Navbar><Categories /></Navbar>}/>
+        <Route path="/categories/:id" element={<Navbar><Products /></Navbar>}/>
+        <Route path="/categories/:id/edit-product/:productId" element={<Navbar><EditProduct /></Navbar>}/>
+        <Route path="/categories/:id/create-purchase/:productId" element={<Navbar><CreatePurchase /></Navbar>}/>
+        <Route path="/categories/:id/create-product" element={<Navbar><CreateProduct /></Navbar>}/>
+        <Route path="/login" element={<Login />}/>
+        <Route path="/sign-up" element={<SignUp />}/>
+        <Route path="/recovery-password" element={<RecoveryPassword />}/>
+        <Route path="/analysis" element={<Navbar><Analysis /></Navbar>}/>
+        <Route path="/change-password" element={<ChangePassword />}/>
+        <Route path="*" element={"404: ruta no encontrada"} />
+      </Routes>
     </BrowserRouter>
-    </>
   )
 } 
 
