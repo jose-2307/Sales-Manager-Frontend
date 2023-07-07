@@ -10,7 +10,7 @@ import { Backdrop, Box, Button, Fade, InputAdornment, Modal, TextField, Typograp
 import { getDebtorsBack, updateDebtorsBack } from '../services/customers.service';
 import { useEffect, useState } from 'react';
 import Loader from './Loader';
-import { dateTransform, formatNumber } from '../utils/functions';
+import { dateTransform, formatNumber, nameTransform } from '../utils/functions';
 import { Link } from 'react-router-dom';
 import "./styles/NewPurchaseOrder.css";
 
@@ -52,15 +52,6 @@ const Home = () => {
     const [openDetailModal, setOpenDetailModal] = useState(null); //Controla que se abra el modal del deudor asociado
     const [open, setOpen] = useState(false); //Controla el abrir y cerrar del modal
 
-    const nameTransform = (name) => {
-        let array = name.split(" ");
-        let result = "";
-        array.forEach(x => {
-            result += " "
-            result += x[0].toUpperCase().concat(x.slice(1));
-        });
-        return result;
-    }
 
     useEffect(() => {
         setLoading(true);

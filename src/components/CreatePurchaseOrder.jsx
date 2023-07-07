@@ -8,6 +8,8 @@ import { getProductsBack } from "../services/products.service";
 import { getCustomersBack } from "../services/customers.service";
 import { getCategories } from "../services/categories.service";
 import SelectInput from "./SelectInput";
+import { nameTransform } from "../utils/functions";
+import "./styles/NewPurchaseOrder.css";
 
 const validate = (values) => {
   const errors = {};
@@ -36,11 +38,12 @@ const CreatePurchaseOrder = () => {
   const [customers, setCustomers] = useState([]);
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [productRows, setProductRows] = useState([{}]); //Estado para almacenar las filas de productos
 
   useEffect(() => {
     setLoading(true);
     let errorOCurred = false;
-    const fetchDebtors = async () => {
+    const fetchData = async () => {
       try {
         const customersData = await getCustomersBack();
         let categoriesData = await getCategories();
@@ -54,7 +57,6 @@ const CreatePurchaseOrder = () => {
           }
         }
         categoriesData = newCategoriesData;
-
         setCategories(categoriesData);
         setCustomers(customersData);
       } catch (error) {
@@ -67,7 +69,7 @@ const CreatePurchaseOrder = () => {
         }
       }
     };
-    fetchDebtors();
+    fetchData();
   }, []);
 
   const handleSubmit = async (values) => {
@@ -80,51 +82,118 @@ const CreatePurchaseOrder = () => {
     setLoading(false);
     setErrorMessage("");
   };
+
+  const handleAddProductRow = () => {
+    setProductRows([...productRows, {}]); //Añade una nueva fila vacía al estado
+  };
   return (
     <>
-      {customers.length === 0
-        ? <div style={{display: "grid", placeItems: "center" }}>No hay clientes registrados.</div>
-        : (
-          <div style={{ display: "grid", placeItems: "center" }}>
-            <Card sx={{ maxWidth: 345 }}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  Registrar venta
-                </Typography>
-                <Formik
-                  initialValues={{ customers: "", salePriceKilo: "" }}
-                  validate={validate}
-                  onSubmit={handleSubmit}
-                >
-                  <Form>
-                    <SelectInput
-                      name="customers"
-                      label="Cliente"
+      {customers.length === 0 ? (
+        <div style={{ display: "grid", placeItems: "center" }}>
+          No hay clientes registrados.
+        </div>
+      ) : (
+        <div style={{ display: "grid", placeItems: "center" }}>
+          <Card sx={{ maxWidth: 400, maxHeight: 480, overflowY: "auto" }}>
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Registrar venta
+              </Typography>
+              <Formik
+                initialValues={{ customers: "", salePriceKilo: "" }}
+                validate={validate}
+                onSubmit={handleSubmit}
+              >
+                <Form>
+                  <SelectInput name="customers" label="Cliente">
+                    <option value="" style={{ fontSize: "14px" }}></option>
+                    {customers.map((customer) => (
+                      <option
+                        style={{ fontSize: "14px" }}
+                        value={customer.name}
+                        key={customer.id}
+                      >
+                        {nameTransform(customer.name)}
+                      </option>
+                    ))}
+                  </SelectInput>
+                  <br />
+                  <TextInput
+                    name="purchaseDate"
+                    label="Fecha de venta"
+                    adornment=" "
+                    type="date"
+                  />
+                  <br />
+                  <TextInput
+                    name="purchasePriceKilo"
+                    label="Abono"
+                    adornment="$"
+                    type="number"
+                  />
+                  <br />
+                  {productRows.map((row, index) => (
+                    <section
+                      style={{ display: "flex", flexDirection: "row" }}
+                      key={index}
                     >
-                      <option value="">Seleccione cliente</option>
-                      {customers.map(customer => (
-                        <option value={customer.name} key={customer.id}>{customer.name}</option>
-                      ))}
-                    </SelectInput>
-                    
-                    <br></br>
-                    <br />
-                    <Button type="submit" variant="outlined">
-                      Guardar
-                    </Button>
-                  </Form>
-                </Formik>
-              </CardContent>
-            </Card>
-            {loading && (
-              <Loader
-                error={errorMessage}
-                closeErrorModal={closeErrorModal}
-              ></Loader>
-            )}
-          </div>
-        )
-      }
+                      <SelectInput name={`products[${index}]`} label="Producto">
+                        <option value="" style={{ fontSize: "14px" }} />
+                        {categories.map((category) => (
+                          <optgroup
+                            label={category.name}
+                            key={category.id}
+                            style={{ fontSize: "14px" }}
+                          >
+                            {products.map((product) =>
+                              product.categoryId === category.id ? (
+                                <option
+                                  style={{ fontSize: "14px" }}
+                                  value={product.name}
+                                  key={product.id}
+                                >
+                                  {nameTransform(product.name)}
+                                </option>
+                              ) : null
+                            )}
+                          </optgroup>
+                        ))}
+                      </SelectInput>
+                      <TextInput
+                        name={`weights[${index}]`}
+                        label="Cantidad"
+                        adornment="g"
+                        type="number"
+                        dimesions={{ m: 1, width: "16ch" }}
+                      />
+                      {index === productRows.length - 1 && ( //Permite visibilizar el botón en la última fila
+                        <button
+                          className="add-product-button"
+                          type="button"
+                          onClick={handleAddProductRow}
+                        >
+                          <img src={"../../icons/boton-mas.png"} alt="Add" />
+                        </button>
+                      )}
+                    </section>
+                  ))}
+                  <br />
+                  <br />
+                  <Button type="submit" variant="outlined">
+                    Guardar
+                  </Button>
+                </Form>
+              </Formik>
+            </CardContent>
+          </Card>
+          {loading && (
+            <Loader
+              error={errorMessage}
+              closeErrorModal={closeErrorModal}
+            ></Loader>
+          )}
+        </div>
+      )}
     </>
   );
 };

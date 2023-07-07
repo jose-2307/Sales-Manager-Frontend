@@ -1,3 +1,5 @@
+/* Botón para acceder al formulario */
+
 .purchaseOrderButton {
     position: absolute;
     top: 93%;
@@ -24,6 +26,25 @@
     padding-left: 4%;
 }
 
+/*Formulario*/
+
+.add-product-button {
+    height: 100%;
+    width: 14%;
+    background-color: #fff;
+    border: none;
+    padding-top: 40px;
+}
+
+.add-product-button img {
+    width: 50%;
+    height: inherit;
+    cursor: pointer;
+}
+
+.add-product-button img:hover {
+    opacity: 0.5;
+}
 
 @media (min-width: 1400px) {
     .purchaseOrderButton {
