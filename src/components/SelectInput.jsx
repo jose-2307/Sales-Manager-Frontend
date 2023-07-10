@@ -1,4 +1,4 @@
-import { InputLabel, NativeSelect, Select } from "@mui/material";
+import { InputLabel, NativeSelect } from "@mui/material";
 import { useField } from "formik";
 
 const SelectInput = ({ label, ...props }) => {

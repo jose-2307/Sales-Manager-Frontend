@@ -1,54 +1,75 @@
 /* Botón para acceder al formulario */
 
 .purchaseOrderButton {
-    position: absolute;
-    top: 93%;
-    right: 1%;
-    text-decoration: none;
-    background-color: rgb(252, 211, 79);
-    border-radius: 20px;
-    padding: 0.4% 0.6%;
-    width: 10%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: black;
-    font-size: 100%;
+  position: absolute;
+  top: 93%;
+  right: 1%;
+  text-decoration: none;
+  background-color: rgb(252, 211, 79);
+  border-radius: 20px;
+  padding: 0.4% 0.6%;
+  width: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 100%;
 }
 .purchaseOrderButton:hover {
-    opacity: 0.7;
+  opacity: 0.7;
 }
 
-.purchaseOrderButton img {   
-    max-width: 14%;
-    height: 40%;
-    position: relative;
-    padding-left: 4%;
+.purchaseOrderButton img {
+  max-width: 14%;
+  height: 40%;
+  position: relative;
+  padding-left: 4%;
 }
 
 /*Formulario*/
 
 .add-product-button {
-    height: 100%;
-    width: 14%;
-    background-color: #fff;
-    border: none;
-    padding-top: 40px;
+  height: 100%;
+  width: 14%;
+  background-color: #fff;
+  border: none;
+  padding: 40px 0 0 0;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .add-product-button img {
-    width: 50%;
-    height: inherit;
-    cursor: pointer;
+  width: 40%;
+  height: inherit;
+  cursor: pointer;
 }
 
 .add-product-button img:hover {
-    opacity: 0.5;
+  opacity: 0.5;
+}
+
+.customer-date {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.product-weight {
+  display: flex;
+  flex-direction: row;
+}
+
+.products :nth-child(1) {
+  padding-top: 5.5px;
+}
+
+.products {
+  margin-right: 60px;
 }
 
 @media (min-width: 1400px) {
-    .purchaseOrderButton {
-        width: 7%;
-        top: 94%;
-    }
+  .purchaseOrderButton {
+    width: 7%;
+    top: 94%;
+  }
 }

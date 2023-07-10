@@ -1,13 +1,10 @@
-import { Button, Card, CardContent, Typography } from "@mui/material";
-import { Form, Formik } from "formik";
+import { Button, Card, CardContent, InputAdornment, InputLabel, NativeSelect, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TextInput from "./TextInput";
 import Loader from "./Loader";
 import { getProductsBack } from "../services/products.service";
 import { getCustomersBack } from "../services/customers.service";
 import { getCategories } from "../services/categories.service";
-import SelectInput from "./SelectInput";
 import { nameTransform } from "../utils/functions";
 import "./styles/NewPurchaseOrder.css";
 
@@ -72,7 +69,16 @@ const CreatePurchaseOrder = () => {
     fetchData();
   }, []);
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    // Obtener los valores del formulario
+    const values = {};
+    for (let [name, value] of formData.entries()) {
+      values[name] = value;
+    }
+
     console.log(values);
     navigate("/");
   };
@@ -87,7 +93,7 @@ const CreatePurchaseOrder = () => {
     setProductRows([...productRows, {}]); //Añade una nueva fila vacía al estado
   };
   return (
-    <>
+    <div style={{display: "grid", placeItems: "center", height: "90vh"}}>
       {customers.length === 0 ? (
         <div style={{ display: "grid", placeItems: "center" }}>
           No hay clientes registrados.
@@ -99,72 +105,92 @@ const CreatePurchaseOrder = () => {
               <Typography gutterBottom variant="h5" component="div">
                 Registrar venta
               </Typography>
-              <Formik
-                initialValues={{ customers: "", salePriceKilo: "" }}
-                validate={validate}
-                onSubmit={handleSubmit}
-              >
-                <Form>
-                  <SelectInput name="customers" label="Cliente">
-                    <option value="" style={{ fontSize: "14px" }}></option>
-                    {customers.map((customer) => (
-                      <option
-                        style={{ fontSize: "14px" }}
-                        value={customer.name}
-                        key={customer.id}
-                      >
-                        {nameTransform(customer.name)}
-                      </option>
-                    ))}
-                  </SelectInput>
+                <form onSubmit={handleSubmit}>
+                  <br/>
+                  <section className="customer-date">
+                    <div>
+                      <InputLabel 
+                      variant="standard"
+                      htmlFor="uncontrolled-native"
+                      sx={{ fontSize: "12px", width: "30ch" }}>Cliente</InputLabel>
+                      <NativeSelect name="customers" label="Cliente" sx={{ width: "16ch" }}>
+                        <option value="" style={{ fontSize: "14px" }}></option>
+                        {customers.map((customer) => (
+                          <option
+                            style={{ fontSize: "14px" }}
+                            value={customer.name}
+                            key={customer.id}
+                          >
+                            {nameTransform(customer.name)}
+                          </option>
+                        ))}
+                      </NativeSelect>
+                    </div>                    
+                    <TextField
+                      name="purchaseDate"
+                      label="Fecha de venta"
+                      type="date"
+                      variant="standard"
+                      InputProps={{
+                        startAdornment: <InputAdornment position="start"></InputAdornment>,
+                      }}
+                    />
+                  </section>
                   <br />
-                  <TextInput
-                    name="purchaseDate"
-                    label="Fecha de venta"
-                    adornment=" "
-                    type="date"
-                  />
-                  <br />
-                  <TextInput
+                  <TextField
                     name="purchasePriceKilo"
                     label="Abono"
-                    adornment="$"
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                    }}
                     type="number"
+                    variant="standard"
+                    fullWidth
                   />
+                  <br />
                   <br />
                   {productRows.map((row, index) => (
                     <section
-                      style={{ display: "flex", flexDirection: "row" }}
+                      className="product-weight"
                       key={index}
                     >
-                      <SelectInput name={`products[${index}]`} label="Producto">
-                        <option value="" style={{ fontSize: "14px" }} />
-                        {categories.map((category) => (
-                          <optgroup
-                            label={category.name}
-                            key={category.id}
-                            style={{ fontSize: "14px" }}
-                          >
-                            {products.map((product) =>
-                              product.categoryId === category.id ? (
-                                <option
-                                  style={{ fontSize: "14px" }}
-                                  value={product.name}
-                                  key={product.id}
-                                >
-                                  {nameTransform(product.name)}
-                                </option>
-                              ) : null
-                            )}
-                          </optgroup>
-                        ))}
-                      </SelectInput>
-                      <TextInput
+                      <div className="products">
+                        <InputLabel 
+                        variant="standard"
+                        htmlFor="uncontrolled-native"
+                        style={{ fontSize: "12px" }}>Producto</InputLabel>
+                        <NativeSelect name={`products[${index}]`} label="Producto" sx={{ width: "16ch" }}>
+                          <option value="" style={{ fontSize: "14px" }} />
+                          {categories.map((category) => (
+                            <optgroup
+                              label={category.name}
+                              key={category.id}
+                              style={{ fontSize: "14px" }}
+                            >
+                              {products.map((product) =>
+                                product.categoryId === category.id ? (
+                                  <option
+                                    style={{ fontSize: "14px" }}
+                                    value={product.name}
+                                    key={product.id}
+                                  >
+                                    {nameTransform(product.name)}
+                                  </option>
+                                ) : null
+                              )}
+                            </optgroup>
+                          ))}
+                        </NativeSelect>
+                      </div>
+                      <TextField
                         name={`weights[${index}]`}
                         label="Cantidad"
-                        adornment="g"
                         type="number"
-                        dimesions={{ m: 1, width: "16ch" }}
+                        sx={{ m: 1, width: "12ch" }}
+                        InputProps={{
+                          startAdornment: <InputAdornment position="start">g</InputAdornment>,
+                        }}
+                        variant="standard"
                       />
                       {index === productRows.length - 1 && ( //Permite visibilizar el botón en la última fila
                         <button
@@ -179,11 +205,10 @@ const CreatePurchaseOrder = () => {
                   ))}
                   <br />
                   <br />
-                  <Button type="submit" variant="outlined">
+                  <Button type="submit" variant="outlined" >
                     Guardar
                   </Button>
-                </Form>
-              </Formik>
+                </form>
             </CardContent>
           </Card>
           {loading && (
@@ -194,7 +219,7 @@ const CreatePurchaseOrder = () => {
           )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
