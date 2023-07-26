@@ -92,3 +92,20 @@ export const nameTransform = (name) => {
     });
     return result;
 }
+
+export const sortArray = (array) => {
+    array.sort((a,b) => {
+        const nameA = a.name;
+        const nameB = b.name;
+
+        if (nameA < nameB) {
+          return -1;
+        } else if (nameA > nameB) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+
+    return array;
+}

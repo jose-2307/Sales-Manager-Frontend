@@ -5,28 +5,10 @@ import Loader from "./Loader";
 import { getProductsBack } from "../services/products.service";
 import { getCustomersBack } from "../services/customers.service";
 import { getCategories } from "../services/categories.service";
-import { nameTransform } from "../utils/functions";
+import { nameTransform, sortArray } from "../utils/functions";
 import "./styles/NewPurchaseOrder.css";
 
-const validate = (values) => {
-  const errors = {};
 
-  if (!values.name) {
-    errors.name = "Requerido";
-  } else if (values.name.length < 3) {
-    errors.name = "El nombre debe tener al menos 3 caracteres";
-  } else if (values.name.length > 30) {
-    errors.name = "El nombre debe tener a lo más 30 caracteres";
-  }
-
-  if (!values.salePriceKilo) {
-    errors.salePriceKilo = "Requerido";
-  } else if (values.purchasePriceKilo <= 0) {
-    errors.salePriceKilo = "El valor debe ser positivo";
-  }
-
-  return errors;
-};
 
 const CreatePurchaseOrder = () => {
   const [loading, setLoading] = useState(false);
@@ -36,24 +18,28 @@ const CreatePurchaseOrder = () => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [productRows, setProductRows] = useState([{}]); //Estado para almacenar las filas de productos
+  const [validationError, setValidationError] = useState({}); //Valida el contenido del input
+  const [blockButton, setBlockButton] = useState(false); //Bloquea el botón en caso de no ser válido
 
   useEffect(() => {
     setLoading(true);
     let errorOCurred = false;
     const fetchData = async () => {
       try {
-        const customersData = await getCustomersBack();
+        let customersData = await getCustomersBack();
+        customersData = sortArray(customersData);
         let categoriesData = await getCategories();
 
         const newCategoriesData = [];
         for (let category of categoriesData) {
-          const productsData = await getProductsBack(category.id);
+          let productsData = await getProductsBack(category.id);
+          productsData = sortArray(productsData);
           if (productsData.length !== 0) {
             setProducts(productsData);
             newCategoriesData.push(category);
           }
         }
-        categoriesData = newCategoriesData;
+        categoriesData = sortArray(newCategoriesData);
         setCategories(categoriesData);
         setCustomers(customersData);
       } catch (error) {
@@ -69,6 +55,57 @@ const CreatePurchaseOrder = () => {
     fetchData();
   }, []);
 
+
+  const handlePurchaseDateChange = (e) => {
+    const [year, month, day] = e.target.value.split('-');//Para obtener la fecha correcta debido al GMT-4 o GMT-3
+    const selectedDate = new Date(year, month - 1, day); 
+    let hasError = false;
+    if (selectedDate > new Date() || selectedDate <= new Date("1-1-2022")) {
+      hasError = true;
+      setValidationError((prevErrors) => ({
+        ...prevErrors,
+        ["purchaseDate"]: "Error: La fecha no debe ser mayor a la fecha actual.",
+      }));
+    }
+    if (hasError === false) {
+      let copy = validationError;
+      if ("purchaseDate" in validationError) {
+        delete copy.purchaseDate;
+      }
+      setValidationError(copy);
+    }
+    setBlockButton(hasError);
+  }
+
+  const handleSubscriberChange = (e) => {
+    let hasError = false;
+
+    if (parseInt(e.target.value) <= 0) {
+      hasError = true;
+      setValidationError((prevErrors) => ({
+        ...prevErrors,
+        ["subscriber"]: "Error en el abono",
+      }));
+    }
+
+    if (hasError === false) {
+      let copy = validationError;
+      if ("subscriber" in validationError) {
+        delete copy.subscriber;
+      }
+      setValidationError(copy);
+    }
+    setBlockButton(hasError);
+  }
+
+  const handleProductChange = (e) => {
+    console.log(e.target.value);
+  }
+
+  const handleWeightChange = (e) => {
+    console.log(e.target.value);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -80,7 +117,7 @@ const CreatePurchaseOrder = () => {
     }
 
     console.log(values);
-    navigate("/");
+    // navigate("/");
   };
 
   const closeErrorModal = () => {
@@ -92,6 +129,14 @@ const CreatePurchaseOrder = () => {
   const handleAddProductRow = () => {
     setProductRows([...productRows, {}]); //Añade una nueva fila vacía al estado
   };
+
+  const handleRemoveProductRow = () => { //Elimina la última fila
+    const newProductRows = [...productRows];
+    newProductRows.pop();
+    setProductRows(newProductRows);
+  }
+
+  console.log(validationError)
   return (
     <div style={{display: "grid", placeItems: "center", height: "90vh"}}>
       {customers.length === 0 ? (
@@ -100,7 +145,7 @@ const CreatePurchaseOrder = () => {
         </div>
       ) : (
         <div style={{ display: "grid", placeItems: "center" }}>
-          <Card sx={{ maxWidth: 400, maxHeight: 480, overflowY: "auto" }}>
+          <Card sx={{ maxWidth: 420, maxHeight: 480, overflowY: "auto" }}>
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
                 Registrar venta
@@ -112,8 +157,9 @@ const CreatePurchaseOrder = () => {
                       <InputLabel 
                       variant="standard"
                       htmlFor="uncontrolled-native"
-                      sx={{ fontSize: "12px", width: "30ch" }}>Cliente</InputLabel>
-                      <NativeSelect name="customers" label="Cliente" sx={{ width: "16ch" }}>
+                      sx={{ fontSize: "12px", width: "30ch" }}
+                      >Cliente</InputLabel>
+                      <NativeSelect name="customers" label="Cliente" sx={{ width: "16ch" }} required>
                         <option value="" style={{ fontSize: "14px" }}></option>
                         {customers.map((customer) => (
                           <option
@@ -131,9 +177,12 @@ const CreatePurchaseOrder = () => {
                       label="Fecha de venta"
                       type="date"
                       variant="standard"
+                      onChange={e => handlePurchaseDateChange(e)}
                       InputProps={{
                         startAdornment: <InputAdornment position="start"></InputAdornment>,
                       }}
+                      error={validationError.purchaseDate ? true : false}
+                      helperText={validationError.purchaseDate}
                     />
                   </section>
                   <br />
@@ -143,6 +192,7 @@ const CreatePurchaseOrder = () => {
                     InputProps={{
                       startAdornment: <InputAdornment position="start">$</InputAdornment>,
                     }}
+                    onChange={e => handleSubscriberChange(e)}
                     type="number"
                     variant="standard"
                     fullWidth
@@ -186,20 +236,32 @@ const CreatePurchaseOrder = () => {
                         name={`weights[${index}]`}
                         label="Cantidad"
                         type="number"
-                        sx={{ m: 1, width: "12ch" }}
+                        sx={{ m: 1, maxWidth: "12ch" }}
                         InputProps={{
                           startAdornment: <InputAdornment position="start">g</InputAdornment>,
                         }}
                         variant="standard"
                       />
+                      {index !== productRows.length - 1 && <div className="spaceDiv"></div>}
                       {index === productRows.length - 1 && ( //Permite visibilizar el botón en la última fila
-                        <button
-                          className="add-product-button"
-                          type="button"
-                          onClick={handleAddProductRow}
-                        >
-                          <img src={"../../icons/boton-mas.png"} alt="Add" />
-                        </button>
+                        <div className="buttons">
+                          <button
+                            className="add-product-button"
+                            type="button"
+                            onClick={handleAddProductRow}
+                          >
+                            <img src={"../../icons/boton-mas.png"} alt="Add" />
+                          </button>
+                          {productRows.length > 1 && (
+                            <button
+                              className="remove-product-button"
+                              type="button"
+                              onClick={handleRemoveProductRow}
+                            >
+                              <img src={"../../icons/boton-menos.png"} alt="Remove" />
+                            </button>
+                          )}
+                        </div>
                       )}
                     </section>
                   ))}
@@ -219,6 +281,7 @@ const CreatePurchaseOrder = () => {
           )}
         </div>
       )}
+      {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
     </div>
   );
 };
