@@ -414,7 +414,6 @@ const Home = () => {
                         {
                             Object.values(inputRows).some((value) => value !== "") || Object.values(selectedRows).some((selected) => selected) //La segunda condición verifica si al menos 1 de los checkboxes han sido seleccionados
                             ? (
-                             
                                 blockButton
                                 ? (
                                     <Button variant="contained" color="primary" disabled type="submit" onClick={handleSaveChanges} style={{margin:"20px"}}>

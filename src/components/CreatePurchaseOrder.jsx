@@ -19,7 +19,9 @@ const CreatePurchaseOrder = () => {
   const [products, setProducts] = useState([]);
   const [productRows, setProductRows] = useState([{}]); //Estado para almacenar las filas de productos
   const [validationError, setValidationError] = useState({}); //Valida el contenido del input
-  const [blockButton, setBlockButton] = useState(false); //Bloquea el botón en caso de no ser válido
+  const [selectProducts, setSelectProducts] = useState([]);
+  const [blockButton, setBlockButton] = useState({}); //Bloquea el botón en caso de haber algún error
+  const [forceUpdate, setForceUpdate] = useState(false); //Estado axiliar utilizado para forzar el rederizado del componente luego de deseleccionar un producto
 
   useEffect(() => {
     setLoading(true);
@@ -55,6 +57,9 @@ const CreatePurchaseOrder = () => {
     fetchData();
   }, []);
 
+  /**
+   * Control de errores 
+  */
 
   const handlePurchaseDateChange = (e) => {
     const [year, month, day] = e.target.value.split('-');//Para obtener la fecha correcta debido al GMT-4 o GMT-3
@@ -66,15 +71,21 @@ const CreatePurchaseOrder = () => {
         ...prevErrors,
         ["purchaseDate"]: "Error: La fecha no debe ser mayor a la fecha actual.",
       }));
+      setBlockButton((prevBlockButton) => ({
+        ...prevBlockButton,
+        ["purchaseDate"]: true,
+      }));
     }
     if (hasError === false) {
       let copy = validationError;
+      let blockButtonCopy = { ...blockButton };
       if ("purchaseDate" in validationError) {
         delete copy.purchaseDate;
+        delete blockButtonCopy.purchaseDate;
       }
       setValidationError(copy);
+      setBlockButton(blockButtonCopy);
     }
-    setBlockButton(hasError);
   }
 
   const handleSubscriberChange = (e) => {
@@ -84,26 +95,72 @@ const CreatePurchaseOrder = () => {
       hasError = true;
       setValidationError((prevErrors) => ({
         ...prevErrors,
-        ["subscriber"]: "Error en el abono",
+        ["subscriber"]: "Error: El valor debe ser mayor 0.",
+      }));
+      setBlockButton((prevBlockButton) => ({
+        ...prevBlockButton,
+        ["subscriber"]: true,
       }));
     }
 
     if (hasError === false) {
       let copy = validationError;
+      let blockButtonCopy = { ...blockButton };
       if ("subscriber" in validationError) {
         delete copy.subscriber;
+        delete blockButtonCopy.subscriber;
       }
       setValidationError(copy);
+      setBlockButton(blockButtonCopy);
     }
-    setBlockButton(hasError);
   }
 
-  const handleProductChange = (e) => {
-    console.log(e.target.value);
+  const handleProductChange = (e, num) => {
+    if (e.target.value == "") {
+      let copy = selectProducts;
+      if (`product-${num}` in selectProducts) {
+        delete copy[`product-${num}`];
+      }
+      setSelectProducts(copy);
+    } else {
+      setSelectProducts((prevSelectProducts) => ({
+        ...prevSelectProducts,
+        [`product-${num}`]: e.target.value
+      }));
+    }
+    setForceUpdate(true); //Fuerza la actualización del componente para que aparezca la opción seleccionable
   }
 
-  const handleWeightChange = (e) => {
-    console.log(e.target.value);
+  useEffect(() => {
+    //Resetea la variable de actualización forzada después de que el componente se haya vuelto a renderizar
+    setForceUpdate(false);
+  }, [selectProducts]);
+
+  const handleWeightChange = (e, num) => {
+    let hasError = false;
+
+    if (parseInt(e.target.value) <= 0) {
+      hasError = true;
+      setValidationError((prevErrors) => ({
+        ...prevErrors,
+        [`weight-${num}`]: "Error: El valor debe ser mayor que 0.",
+      }));
+      setBlockButton((prevBlockButton) => ({
+        ...prevBlockButton,
+        [`weight-${num}`]: true,
+      }));
+    }
+
+    if (hasError === false) {
+      let copy = validationError;
+      let blockButtonCopy = { ...blockButton };
+      if (`weight-${num}` in validationError) {
+        delete copy[`weight-${num}`];
+        delete blockButtonCopy[`weight-${num}`];
+      }
+      setValidationError(copy);
+      setBlockButton(blockButtonCopy);
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -136,7 +193,6 @@ const CreatePurchaseOrder = () => {
     setProductRows(newProductRows);
   }
 
-  console.log(validationError)
   return (
     <div style={{display: "grid", placeItems: "center", height: "90vh"}}>
       {customers.length === 0 ? (
@@ -181,6 +237,7 @@ const CreatePurchaseOrder = () => {
                       InputProps={{
                         startAdornment: <InputAdornment position="start"></InputAdornment>,
                       }}
+                      required
                       error={validationError.purchaseDate ? true : false}
                       helperText={validationError.purchaseDate}
                     />
@@ -195,6 +252,8 @@ const CreatePurchaseOrder = () => {
                     onChange={e => handleSubscriberChange(e)}
                     type="number"
                     variant="standard"
+                    error={validationError.subscriber ? true : false}
+                    helperText={validationError.subscriber}
                     fullWidth
                   />
                   <br />
@@ -209,7 +268,7 @@ const CreatePurchaseOrder = () => {
                         variant="standard"
                         htmlFor="uncontrolled-native"
                         style={{ fontSize: "12px" }}>Producto</InputLabel>
-                        <NativeSelect name={`products[${index}]`} label="Producto" sx={{ width: "16ch" }}>
+                        <NativeSelect name={`products[${index}]`} label="Producto" sx={{ width: "16ch" }} onChange={e => handleProductChange(e, index)} required>
                           <option value="" style={{ fontSize: "14px" }} />
                           {categories.map((category) => (
                             <optgroup
@@ -219,13 +278,26 @@ const CreatePurchaseOrder = () => {
                             >
                               {products.map((product) =>
                                 product.categoryId === category.id ? (
-                                  <option
-                                    style={{ fontSize: "14px" }}
-                                    value={product.name}
-                                    key={product.id}
-                                  >
-                                    {nameTransform(product.name)}
-                                  </option>
+                                  Object.values(selectProducts).includes(product.name) 
+                                    ? (
+                                      <option
+                                        style={{ fontSize: "14px" }}
+                                        value={product.name}
+                                        key={product.id}
+                                        disabled
+                                      >
+                                        {nameTransform(product.name)}
+                                      </option>
+                                    )
+                                    : (
+                                      <option
+                                        style={{ fontSize: "14px" }}
+                                        value={product.name}
+                                        key={product.id}
+                                      >
+                                        {nameTransform(product.name)}
+                                      </option>
+                                    )
                                 ) : null
                               )}
                             </optgroup>
@@ -240,7 +312,11 @@ const CreatePurchaseOrder = () => {
                         InputProps={{
                           startAdornment: <InputAdornment position="start">g</InputAdornment>,
                         }}
+                        onChange={e => handleWeightChange(e, index)}
                         variant="standard"
+                        required
+                        error={validationError[`weight-${index}`] ? true : false}
+                        helperText={validationError[`weight-${index}`]}
                       />
                       {index !== productRows.length - 1 && <div className="spaceDiv"></div>}
                       {index === productRows.length - 1 && ( //Permite visibilizar el botón en la última fila
@@ -267,9 +343,20 @@ const CreatePurchaseOrder = () => {
                   ))}
                   <br />
                   <br />
-                  <Button type="submit" variant="outlined" >
-                    Guardar
-                  </Button>
+                  {
+                    Object.values(blockButton).includes(true) 
+                    ? (
+                      <Button type="submit" variant="outlined" disabled>
+                        Guardar
+                      </Button>
+                    )
+                    : (
+                      <Button type="submit" variant="outlined" >
+                        Guardar
+                      </Button>
+                    )
+                  }
+                  
                 </form>
             </CardContent>
           </Card>
