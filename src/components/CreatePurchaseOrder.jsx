@@ -5,7 +5,7 @@ import Loader from "./Loader";
 import { getProductsBack } from "../services/products.service";
 import { getCustomersBack } from "../services/customers.service";
 import { getCategories } from "../services/categories.service";
-import { nameTransform, sortArray } from "../utils/functions";
+import { formatNumber, nameTransform, sortArray } from "../utils/functions";
 import "./styles/NewPurchaseOrder.css";
 
 
@@ -164,17 +164,55 @@ const CreatePurchaseOrder = () => {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+    setLoading(true);
+    let errorOCurred = false;
+    try {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      //Obtengo los valores del formulario
+      let values = {};
+      for (let [name, value] of formData.entries()) {
+        values[name] = value;
+      }
 
-    // Obtener los valores del formulario
-    const values = {};
-    for (let [name, value] of formData.entries()) {
-      values[name] = value;
+      //Obtengo los productos seleccionados
+      const arr = [];
+      for (let key of Object.keys(selectProducts)) {
+        let obj = {};
+        const productSplited = key.split("-");
+        obj[`productId`] = selectProducts[key];
+        obj[`weight`] = values[`weights[${productSplited[1]}]`];
+        arr.push(obj);
+      }
+      // console.log(values)
+      console.log(arr)
+      //purchase-order: id cliente, fecha y abono (opcional)
+      //product: id cliente, id order, id product, weight
+      console.log(products)
+      //*Validación previa
+      let totalPrice = 0;
+      for (let x of arr) {
+        const product = products.find(p => p.id == x.productId);
+        totalPrice += (product.salePriceKilo * parseInt(x.weight)) / 1000;
+        if (product.weight < x.weight) {
+          throw new Error(`El stock de ${product.name} (${formatNumber(product.weight)}g) es insuficiente para la venta.`)
+        }
+      }
+      if (totalPrice <= values.purchasePriceKilo) {
+        throw new Error("El abono no debe ser mayor o igual al total de la venta.");
+      }
+      // console.log(customers)
+
+      // navigate("/");
+    } catch (error) {
+      console.log(error.message);
+      setErrorMessage(error.message);
+      errorOCurred = true;
+    } finally {
+        if (!errorOCurred) {
+            setLoading(false);
+        }
     }
-
-    console.log(values);
-    // navigate("/");
   };
 
   const closeErrorModal = () => {
@@ -220,7 +258,7 @@ const CreatePurchaseOrder = () => {
                         {customers.map((customer) => (
                           <option
                             style={{ fontSize: "14px" }}
-                            value={customer.name}
+                            value={customer.id}
                             key={customer.id}
                           >
                             {nameTransform(customer.name)}
@@ -258,7 +296,7 @@ const CreatePurchaseOrder = () => {
                   />
                   <br />
                   <br />
-                  {productRows.map((row, index) => (
+                  {productRows.map((_, index) => (
                     <section
                       className="product-weight"
                       key={index}
@@ -275,14 +313,15 @@ const CreatePurchaseOrder = () => {
                               label={category.name}
                               key={category.id}
                               style={{ fontSize: "14px" }}
+                              
                             >
                               {products.map((product) =>
                                 product.categoryId === category.id ? (
-                                  Object.values(selectProducts).includes(product.name) 
+                                  Object.values(selectProducts).includes(product.id.toString()) 
                                     ? (
                                       <option
                                         style={{ fontSize: "14px" }}
-                                        value={product.name}
+                                        value={product.id}
                                         key={product.id}
                                         disabled
                                       >
@@ -292,7 +331,7 @@ const CreatePurchaseOrder = () => {
                                     : (
                                       <option
                                         style={{ fontSize: "14px" }}
-                                        value={product.name}
+                                        value={product.id}
                                         key={product.id}
                                       >
                                         {nameTransform(product.name)}
