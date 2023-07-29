@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import { getProductsBack } from "../services/products.service";
-import { getCustomersBack } from "../services/customers.service";
+import { getCustomersBack, postOrderBack, postOrderProductBack } from "../services/customers.service";
 import { getCategories } from "../services/categories.service";
 import { formatNumber, nameTransform, sortArray } from "../utils/functions";
 import "./styles/NewPurchaseOrder.css";
@@ -184,11 +184,7 @@ const CreatePurchaseOrder = () => {
         obj[`weight`] = values[`weights[${productSplited[1]}]`];
         arr.push(obj);
       }
-      // console.log(values)
-      console.log(arr)
-      //purchase-order: id cliente, fecha y abono (opcional)
-      //product: id cliente, id order, id product, weight
-      console.log(products)
+      
       //*Validación previa
       let totalPrice = 0;
       for (let x of arr) {
@@ -199,11 +195,23 @@ const CreatePurchaseOrder = () => {
         }
       }
       if (totalPrice <= values.purchasePriceKilo) {
-        throw new Error("El abono no debe ser mayor o igual al total de la venta.");
+        throw new Error("El abono debe menor que el total de la venta.");
       }
-      // console.log(customers)
+      
+      //*Llamado api
+      let order;
+      if (values.purchasePriceKilo != "") {
+        console.log("viene con abono")
+        order = await postOrderBack({ customerId: parseInt(values.customers), saleDate: values.purchaseDate, subscriber: values.purchasePriceKilo});
+      } else {
+        console.log("no trae abono")
+        order = await postOrderBack({ customerId: parseInt(values.customers), saleDate: values.purchaseDate });
+      }
 
-      // navigate("/");
+      for (let p of arr) {
+        await postOrderProductBack({ customerId: parseInt(values.customers), orderId: order.id, productId: p.productId, weight: p.weight});
+      }
+      navigate("/");
     } catch (error) {
       console.log(error.message);
       setErrorMessage(error.message);
