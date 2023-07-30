@@ -201,10 +201,8 @@ const CreatePurchaseOrder = () => {
       //*Llamado api
       let order;
       if (values.purchasePriceKilo != "") {
-        console.log("viene con abono")
         order = await postOrderBack({ customerId: parseInt(values.customers), saleDate: values.purchaseDate, subscriber: values.purchasePriceKilo});
       } else {
-        console.log("no trae abono")
         order = await postOrderBack({ customerId: parseInt(values.customers), saleDate: values.purchaseDate });
       }
 
