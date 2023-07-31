@@ -14,7 +14,7 @@ import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Loader from './Loader';
 import { Link } from 'react-router-dom';
-import "./styles/NewPurchaseOrder.css";
+import "./styles/Customers.css";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -69,7 +69,6 @@ const Customers = () => {
             fetchData();
         }
     }, []);
-    console.log(customers)
 
     const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar
         setLoading(false);
@@ -79,14 +78,17 @@ const Customers = () => {
     return (
         <div style={{padding: "30px"}}>
             <h3>Clientes</h3>
+            <Link className="customerButton" to="create-customer">
+                Registrar cliente<img src="../../icons/agregar-usuario.png"/>
+            </Link>
             <br></br>
             {customers.length === 0
                 ? <div>No hay clientes</div>
                 : (
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-                        <TableContainer component={Paper}>
+                        <TableContainer component={Paper} sx={{ maxHeight: 350, overflowY: "auto"}}>
                             <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                                <TableHead>
+                                <TableHead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                                     <TableRow>
                                         {headers.length !== 0 ? (headers.map(h => (
                                             <StyledTableCell align="center" key={h}>{h}</StyledTableCell> 

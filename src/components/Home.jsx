@@ -268,15 +268,14 @@ const Home = () => {
                 : (
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
                         <TableContainer component={Paper}>
-                            
                             <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                                <TableHead>
-                                <TableRow>
-                                    {headers.length !== 0 ? (headers.map(h => (
-                                        <StyledTableCell align="center" key={h}>{h}</StyledTableCell> 
-                                    )))
-                                    : <p>No hay datos</p>}
-                                </TableRow>
+                                <TableHead style={{ position: "sticky", top: 0, zIndex: 1 }}>
+                                    <TableRow>
+                                        {headers.length !== 0 ? (headers.map(h => (
+                                            <StyledTableCell align="center" key={h}>{h}</StyledTableCell> 
+                                        )))
+                                        : <p>No hay datos</p>}
+                                    </TableRow>
                                 </TableHead>
                                 <TableBody>
                                 {debtors.map(row => (
