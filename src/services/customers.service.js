@@ -78,3 +78,62 @@ export const postOrderProductBack = async ({customerId, orderId, productId, weig
         throw new Error("Error creando el producto de la orden de compra.")
     }
 }
+
+export const updateCustomerBack = async (customerId, {name, phone, location, email}) => {
+    let response;
+    if (location && email) {
+        response = await fetchWrapper(`${ENDPOINT}/customer/${customerId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                phone,
+                location,
+                email
+            })
+        });
+    } else if (location && !email) {
+        response = await fetchWrapper(`${ENDPOINT}/customer/${customerId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                phone,
+                location,
+            })
+        });
+    } else if (!location && email) {
+        response = await fetchWrapper(`${ENDPOINT}/customer/${customerId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                phone,
+                email,
+            })
+        });
+    } else {
+        response = await fetchWrapper(`${ENDPOINT}/customer/${customerId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                phone,
+            })
+        });
+    }
+
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error("El dato ingresado ya se encuentra siendo utilizado por otro cliente.")
+    }
+}

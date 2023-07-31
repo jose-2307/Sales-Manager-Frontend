@@ -84,10 +84,10 @@ export const dateTransform = (date) => {
 }
 
 export const nameTransform = (name) => {
-    let array = name.split(" ");
+    let array = name.trim().split(" ");
     let result = "";
     array.forEach(x => {
-        result += " "
+        result += " ";
         result += x[0].toUpperCase().concat(x.slice(1));
     });
     return result;

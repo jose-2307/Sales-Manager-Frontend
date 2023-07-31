@@ -9,6 +9,7 @@ import { patchProductBack } from "../services/products.service";
 import { submitImage } from "../services/images.service";
 import { Card, CardMedia, CardContent, Typography, Button } from "@mui/material";
 import Loader from "./Loader";
+import { nameTransform } from "../utils/functions";
 
 
 const validate = (values) => {
@@ -87,7 +88,7 @@ const EditProduct = () => {
                         />
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">
-                                {product.name[0].toUpperCase().concat(product.name.slice(1))}
+                                {nameTransform(product.name)}
                             </Typography>
                             <Formik 
                                 initialValues={{salePriceKilo: product.salePriceKilo, file:""}} 

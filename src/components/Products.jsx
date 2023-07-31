@@ -36,10 +36,7 @@ const Products = () => {
         if (id === "") return 
         const fetchProducts = async () => {
             try {
-                // const data = await getProductsBack(cookies.get("accessToken"),id);
                 const data = await getProductsBack(id);
-
-                // dispatch(addProduct({data, id}));
                 data.forEach(x => {
                     dispatch(addProduct(x));
                 });

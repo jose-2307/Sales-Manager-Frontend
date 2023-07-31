@@ -13,6 +13,7 @@ import ChangePassword from './components/ChangePassword';
 import Analysis from './components/Analysis';
 import CreatePurchaseOrder from './components/CreatePurchaseOrder';
 import Customers from './components/Customers';
+import EditCustomer from './components/EditCustomer';
 
 
 const App = () => {
@@ -27,6 +28,8 @@ const App = () => {
         <Route path="/categories/:id/create-purchase/:productId" element={<Navbar><CreatePurchase /></Navbar>}/>
         <Route path="/categories/:id/create-product" element={<Navbar><CreateProduct /></Navbar>}/>
         <Route path="/customers" element={<Navbar><Customers /></Navbar>}/>
+        <Route path="/customers/edit/:id" element={<Navbar><EditCustomer /></Navbar>}/>
+
         <Route path="/login" element={<Login />}/>
         <Route path="/sign-up" element={<SignUp />}/>
         <Route path="/recovery-password" element={<RecoveryPassword />}/>
