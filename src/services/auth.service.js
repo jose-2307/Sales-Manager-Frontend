@@ -123,3 +123,25 @@ export const changePasswordBack = async (token, password) => {
         throw new Error("Permiso no autorizado.");
     }
 }
+
+
+export const logoutBack = async () => {
+    const refreshToken = cookies.get("refreshToken");
+    if (!refreshToken) {
+        window.location.assign("/login");
+    }
+    const response = await fetch(`${ENDPOINT}/logout`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "refresh": refreshToken,
+        },
+    });
+    if (response.ok) {
+        cookies.remove("refreshToken");
+        cookies.remove("accessToken");
+        window.location.assign("/login");
+    } else {
+        throw new Error("Permiso no autorizado.");
+    }
+}

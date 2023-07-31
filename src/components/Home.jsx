@@ -285,7 +285,7 @@ const Home = () => {
                                         <StyledTableCell component="th" scope="row" align="center" key={row.debt}>{`$ ${formatNumber(row.debt)}`}</StyledTableCell>
                                         <StyledTableCell align="center">
                                             <input
-                                                style={{width: "16px", height: "16px"}}
+                                                style={{width: "16px", height: "16px", cursor: "pointer"}}
                                                 type="checkbox"
                                                 name={`check-${row.id}`}
                                                 checked={formValues[`check-${row.id}`]?.checked || false}
