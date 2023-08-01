@@ -15,6 +15,7 @@ import CreatePurchaseOrder from './components/CreatePurchaseOrder';
 import Customers from './components/Customers';
 import EditCustomer from './components/EditCustomer';
 import CreateCustomer from './components/CreateCustomer';
+import EditUser from './components/EditUser';
 
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/customers" element={<Navbar><Customers /></Navbar>}/>
         <Route path="/customers/edit/:id" element={<Navbar><EditCustomer /></Navbar>}/>
         <Route path="/customers/create-customer" element={<Navbar><CreateCustomer /></Navbar>}/>
+        <Route path="/account" element={<Navbar><EditUser /></Navbar>}/>
         <Route path="/login" element={<Login />}/>
         <Route path="/sign-up" element={<SignUp />}/>
         <Route path="/recovery-password" element={<RecoveryPassword />}/>
