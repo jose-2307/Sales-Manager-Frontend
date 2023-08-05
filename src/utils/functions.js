@@ -1,5 +1,12 @@
 export const formatNumber = (num) => {
-    const numStr = num.toString();
+    let isNegative = false;
+    if (num < 0) {
+        isNegative = true;
+    }
+    let numStr = num.toString();
+    if (isNegative) {
+        numStr = numStr.slice(1);
+    }
     let resp = "";
 
     let cont = 0;
@@ -13,6 +20,9 @@ export const formatNumber = (num) => {
 
     }
     resp = resp.split("").reverse().join("");
+    if (isNegative) {
+        resp = "-" + resp;
+    }
     return resp;
 }
 

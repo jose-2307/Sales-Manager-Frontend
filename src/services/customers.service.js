@@ -30,6 +30,38 @@ export const updateDebtorsBack = async (customerId, orderId, {paymentDate, paidO
     }
 }
 
+export const getSalesBack = async (year, month) => {
+    let response;
+    if (year && month) {
+        response = await fetchWrapper(`${ENDPOINT}/sales?year=${year}&month=${month}`);
+    } else {
+        response = await fetchWrapper(`${ENDPOINT}/sales`);
+    }
+    if(response.ok) {
+        return response.json();
+    } else {
+        throw new Error("Error obtiendo ventas.")
+    }
+}
+
+export const getYearsBack = async () => {
+    const response = await fetchWrapper(`${ENDPOINT}/sales/years`);
+    if(response.ok) {
+        return response.json();
+    } else {
+        throw new Error("Error obtiendo años.")
+    }
+}
+
+export const getMonthsBack = async (year) => {
+    const response = await fetchWrapper(`${ENDPOINT}/sales/months/${year}`);
+    if(response.ok) {
+        return response.json();
+    } else {
+        throw new Error("Error obtiendo meses.")
+    }
+}
+
 export const getCustomersBack = async () => {
     const response = await fetchWrapper(`${ENDPOINT}/customer`);
     if (response.ok) {

@@ -13,6 +13,7 @@ import Loader from './Loader';
 import { dateTransform, formatNumber, nameTransform } from '../utils/functions';
 import { Link } from 'react-router-dom';
 import "./styles/NewPurchaseOrder.css";
+import Sales from './Sales';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -51,7 +52,7 @@ const Home = () => {
     const [inputRows, setInputRows] = useState({}); //Permite visibilizar el botón de guardar al ingresar datos 
     const [openDetailModal, setOpenDetailModal] = useState(null); //Controla que se abra el modal del deudor asociado
     const [open, setOpen] = useState(false); //Controla el abrir y cerrar del modal
-
+    const [clickDebtorsButton, setclickDebtorsButton] = useState(true); //Controla la tabla que se muestra
 
     useEffect(() => {
         setLoading(true);
@@ -258,179 +259,211 @@ const Home = () => {
 
     return (
         <div style={{padding: "30px"}}>
-            <h3>Deudores</h3>
-            <Link className="purchaseOrderButton" to="/create-purchase-order">
-                Registrar venta<img src="../../icons/registrar.png"/>
-            </Link>
-            <br></br>
-            {debtors.length === 0 
-                ? <h3>No hay deudores</h3>
-                : (
-                    <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                                <TableHead style={{ position: "sticky", top: 0, zIndex: 1 }}>
-                                    <TableRow>
-                                        {headers.length !== 0 ? (headers.map(h => (
-                                            <StyledTableCell align="center" key={h}>{h}</StyledTableCell> 
-                                        )))
-                                        : <p>No hay datos</p>}
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                {debtors.map(row => (
-                                    <StyledTableRow key={row.id}>
-                                        <StyledTableCell component="th" scope="row" align="center" key={row.name}>{row.name}</StyledTableCell>
-                                        <StyledTableCell component="th" scope="row" align="center" key={row.location}>{row.location}</StyledTableCell>
-                                        <StyledTableCell component="th" scope="row" align="center" key={row.debt}>{`$ ${formatNumber(row.debt)}`}</StyledTableCell>
-                                        <StyledTableCell align="center">
-                                            <input
-                                                style={{width: "16px", height: "16px", cursor: "pointer"}}
-                                                type="checkbox"
-                                                name={`check-${row.id}`}
-                                                checked={formValues[`check-${row.id}`]?.checked || false}
-                                                // onChange={handleCheckboxChange}
-                                                onChange={(e) => handleCheckboxChange(e, row.id)}
-                                            />
-                                        </StyledTableCell>
-                                        <StyledTableCell align="center">
+            {clickDebtorsButton
+                ? (
+                    <>
+                        <div style={{display: "flex", justifyContent: "center"}}>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row", borderRadius: "0.75rem", backgroundColor: "#000000", width: "230px", height: "42px"}}>
+                                <div style={{ backgroundColor: "rgba(224, 224, 224, 1)", borderRadius: "0.5rem", width: "112px", display: "flex", justifyContent: "center" }}>
+                                    <Button style={{ color: "black" }} disabled>Deudores</Button>
+                                </div>
+                                <div style={{ backgroundColor: "#000000", borderRadius: "0.5rem", width: "112px", display: "flex", justifyContent: "center" }}>
+                                    <Button style={{ color: "#fff" }} onClick={() => setclickDebtorsButton(!clickDebtorsButton)}>Todos</Button>
+                                </div>
+                            </div>
+                        </div>
+                        <br></br>
+                        <Link className="purchaseOrderButton" to="/create-purchase-order">
+                            Registrar venta<img src="../../icons/registrar.png"/>
+                        </Link>
+                        <br></br>
+                        {debtors.length === 0 
+                            ? <h3>No hay deudores</h3>
+                            : (
+                                <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+                                    <TableContainer component={Paper}>
+                                        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                                            <TableHead style={{ position: "sticky", top: 0, zIndex: 1 }}>
+                                                <TableRow>
+                                                    {headers.length !== 0 ? (headers.map(h => (
+                                                        <StyledTableCell align="center" key={h}>{h}</StyledTableCell> 
+                                                    )))
+                                                    : <p>No hay datos</p>}
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                            {debtors.map(row => (
+                                                <StyledTableRow key={row.id}>
+                                                    <StyledTableCell component="th" scope="row" align="center" key={row.name}>{row.name}</StyledTableCell>
+                                                    <StyledTableCell component="th" scope="row" align="center" key={row.location}>{row.location ? row.location : "-"}</StyledTableCell>
+                                                    <StyledTableCell component="th" scope="row" align="center" key={row.debt}>{`$ ${formatNumber(row.debt)}`}</StyledTableCell>
+                                                    <StyledTableCell align="center">
+                                                        <input
+                                                            style={{width: "16px", height: "16px", cursor: "pointer"}}
+                                                            type="checkbox"
+                                                            name={`check-${row.id}`}
+                                                            checked={formValues[`check-${row.id}`]?.checked || false}
+                                                            // onChange={handleCheckboxChange}
+                                                            onChange={(e) => handleCheckboxChange(e, row.id)}
+                                                        />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell align="center">
 
-                                            <TextField
-                                                error={validationError[`subscriber-${row.id}`] ? true : false}
-                                                type="number"
-                                                sx={{ m: 0.2, width: "20ch" }}
-                                                name={`subscriber-${row.id}`}
-                                                InputProps={{
-                                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                                                }}
-                                                disabled={selectedRows[row.id]}
-                                                value={selectedRows[row.id] ? "" : formValues[`subscriber-${row.id}`]?.value || ""}
-                                                onChange={(e) => handleInputChange(e, row.id, row.debt)}
-                                                helperText={validationError[`subscriber-${row.id}`] && <p>Error: El valor debe ser mayor que 0 y menor o igual a la deuda.</p>}
-                                            />
-                                        </StyledTableCell>
-                                        
-                                        <StyledTableCell align="center">
-                                            <Button onClick={() => {setOpenDetailModal(row.id); setOpen(true)}}>
-                                                Ver detalle
-                                            </Button>
-                                        </StyledTableCell>
-                                        {openDetailModal === row.id && ( // Controla que el modal a abrir sea el del producto asociado según el botón cliqueado                                            
-                                            <Modal
-                                                aria-labelledby="transition-modal-title"
-                                                aria-describedby="transition-modal-description"
-                                                open={open} 
-                                                onClose={() => {setOpenDetailModal(null); setOpen(false)}}
-                                                closeAfterTransition
-                                                slots={{ backdrop: Backdrop }}
-                                                slotProps={{
-                                                backdrop: {
-                                                    timeout: 500,
-                                                },
-                                                }}
-                                            >
-                                                <Fade in={open}>
-                                                    <Box sx={{
-                                                        position: "absolute",
-                                                        top: '50%',
-                                                        left: '50%',
-                                                        transform: 'translate(-50%, -50%)',
-                                                        width: 400,
-                                                        bgcolor: 'background.paper',
-                                                        border: '2px solid #000',
-                                                        boxShadow: 24,
-                                                        p: 4,
-                                                        overflowY: "auto",
-                                                        height: 400,
-                                                        
-                                                    }}>
-
-                                                        {row.purchaseOrders.map((order, i) => (
-                                                            <>  
-                                                                <Typography id="transition-modal-title" style={{color: "grey", fontSize: "14px", paddingBottom: "4px", paddingLeft:"8px"}} key={order.id *0.25}>
-                                                                    Fecha
-                                                                </Typography>
-                                                                <Typography id="transition-modal-title" style={{paddingBottom: "6px", paddingLeft:"8px"}} key={order.id}>
-                                                                    {dateTransform(order.saleDate)}
-                                                                </Typography>
-                                                                {order.purchaseOrderProducts.map(p => (
-                                                                    <section key={p.productName} style={{
-                                                                        display: "flex",
-                                                                        flexDirection: "row",
-                                                                        justifyContent: "space-between",
-                                                                        backgroundColor: "#f2f2f2" 
-                                                                        
-                                                                    }}>
-                                                                        <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px" }} >
-                                                                            {`${p.productName[0].toUpperCase().concat(p.productName.slice(1))} `} {`(${formatNumber(p.weight)} g)`}
-                                                                        </Typography>
-                                                                        <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} >{`$ ${formatNumber(parseInt(p.weight) * parseInt(p.priceKilo)/1000)}`}</Typography>
-                                                                    </section>
-                                                                ))}
-                                                                {order.subscriber != 0 && (
-                                                                    <section key={order.subscriber} style={{
-                                                                        display: "flex",
-                                                                        flexDirection: "row",
-                                                                        justifyContent: "space-between",
-                                                                        backgroundColor: "#f2f2f2",
-                                                                        paddingBottom: "14px"
-                                                                    }}>
-                                                                        <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px" }} key={order.subscriber + 1}>Abono</Typography>
-                                                                        <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} key={order.subscriber}>{`$ ${formatNumber(order.subscriber)}`}</Typography>
-                                                                    </section>
-                                                                )}
-                                                                <section style={{
-                                                                    display: "flex",
-                                                                    flexDirection: "row",
-                                                                    justifyContent: "space-between",
+                                                        <TextField
+                                                            error={validationError[`subscriber-${row.id}`] ? true : false}
+                                                            type="number"
+                                                            sx={{ m: 0.2, width: "20ch" }}
+                                                            name={`subscriber-${row.id}`}
+                                                            InputProps={{
+                                                                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                                            }}
+                                                            disabled={selectedRows[row.id]}
+                                                            value={selectedRows[row.id] ? "" : formValues[`subscriber-${row.id}`]?.value || ""}
+                                                            onChange={(e) => handleInputChange(e, row.id, row.debt)}
+                                                            helperText={validationError[`subscriber-${row.id}`] && <p>Error: El valor debe ser mayor que 0 y menor o igual a la deuda.</p>}
+                                                        />
+                                                    </StyledTableCell>
+                                                    
+                                                    <StyledTableCell align="center">
+                                                        <Button onClick={() => {setOpenDetailModal(row.id); setOpen(true)}}>
+                                                            Ver detalle
+                                                        </Button>
+                                                    </StyledTableCell>
+                                                    {openDetailModal === row.id && ( // Controla que el modal a abrir sea el del producto asociado según el botón cliqueado                                            
+                                                        <Modal
+                                                            aria-labelledby="transition-modal-title"
+                                                            aria-describedby="transition-modal-description"
+                                                            open={open} 
+                                                            onClose={() => {setOpenDetailModal(null); setOpen(false)}}
+                                                            closeAfterTransition
+                                                            slots={{ backdrop: Backdrop }}
+                                                            slotProps={{
+                                                            backdrop: {
+                                                                timeout: 500,
+                                                            },
+                                                            }}
+                                                        >
+                                                            <Fade in={open}>
+                                                                <Box sx={{
+                                                                    position: "absolute",
+                                                                    top: '50%',
+                                                                    left: '50%',
+                                                                    transform: 'translate(-50%, -50%)',
+                                                                    width: 400,
+                                                                    bgcolor: 'background.paper',
+                                                                    border: '2px solid #000',
+                                                                    boxShadow: 24,
+                                                                    p: 4,
+                                                                    overflowY: "auto",
+                                                                    height: 400,
+                                                                    
                                                                 }}>
-                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px"  }} key={order.orderDebt + 1}><b>Total</b></Typography>
-                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} key={order.orderDebt}><b>{`$ ${formatNumber(order.orderDebt)}`}</b></Typography>
-                                                                </section>
-                                                                <br></br>
-                                                                {i != row.purchaseOrders.length - 1 && (
-                                                                    <>
-                                                                        <div style={{color: "#bfb8b8", fontSize: "20px"}} >- - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
-                                                                        <br></br>
-                                                                    </>
-                                                                )}
-                                                            </>
-                                                        ))}
-                                                        <br></br>
-                                                        <Button variant="contained" style={{position: "absolute", right: "170px"}} onClick={() => setOpen(false)}>Cerrar</Button>
-                                                        <br></br>
-                                                        
-                                                    </Box>
-                                                </Fade>
-                                            </Modal>
-                                        )}
-                                    </StyledTableRow>
-                                ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                        
-                        {
-                            Object.values(inputRows).some((value) => value !== "") || Object.values(selectedRows).some((selected) => selected) //La segunda condición verifica si al menos 1 de los checkboxes han sido seleccionados
-                            ? (
-                                blockButton
-                                ? (
-                                    <Button variant="contained" color="primary" disabled type="submit" onClick={handleSaveChanges} style={{margin:"20px"}}>
-                                        Guardar
-                                    </Button>
-                                )
-                                : (
-                                    <Button variant="contained" color="primary" type="submit" onClick={handleSaveChanges} style={{margin:"20px"}}>
-                                        Guardar
-                                    </Button>
-                                )
+
+                                                                    {row.purchaseOrders.map((order, i) => (
+                                                                        <>  
+                                                                            <Typography id="transition-modal-title" style={{color: "grey", fontSize: "14px", paddingBottom: "4px", paddingLeft:"8px"}} key={order.id *0.25}>
+                                                                                Fecha
+                                                                            </Typography>
+                                                                            <Typography id="transition-modal-title" style={{paddingBottom: "6px", paddingLeft:"8px"}} key={order.id}>
+                                                                                {dateTransform(order.saleDate)}
+                                                                            </Typography>
+                                                                            {order.purchaseOrderProducts.map(p => (
+                                                                                <section key={p.productName} style={{
+                                                                                    display: "flex",
+                                                                                    flexDirection: "row",
+                                                                                    justifyContent: "space-between",
+                                                                                    backgroundColor: "#f2f2f2" 
+                                                                                    
+                                                                                }}>
+                                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px" }} >
+                                                                                        {`${p.productName[0].toUpperCase().concat(p.productName.slice(1))} `} {`(${formatNumber(p.weight)} g)`}
+                                                                                    </Typography>
+                                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} >{`$ ${formatNumber(parseInt(p.weight) * parseInt(p.priceKilo)/1000)}`}</Typography>
+                                                                                </section>
+                                                                            ))}
+                                                                            {order.subscriber != 0 && (
+                                                                                <section key={order.subscriber} style={{
+                                                                                    display: "flex",
+                                                                                    flexDirection: "row",
+                                                                                    justifyContent: "space-between",
+                                                                                    backgroundColor: "#f2f2f2",
+                                                                                    paddingBottom: "14px"
+                                                                                }}>
+                                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px" }} key={order.subscriber + 1}>Abono</Typography>
+                                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} key={order.subscriber}>{`$ ${formatNumber(order.subscriber)}`}</Typography>
+                                                                                </section>
+                                                                            )}
+                                                                            <section style={{
+                                                                                display: "flex",
+                                                                                flexDirection: "row",
+                                                                                justifyContent: "space-between",
+                                                                            }}>
+                                                                                <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px"  }} key={order.orderDebt + 1}><b>Total</b></Typography>
+                                                                                <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} key={order.orderDebt}><b>{`$ ${formatNumber(order.orderDebt)}`}</b></Typography>
+                                                                            </section>
+                                                                            <br></br>
+                                                                            {i != row.purchaseOrders.length - 1 && (
+                                                                                <>
+                                                                                    <div style={{color: "#bfb8b8", fontSize: "20px"}} >- - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+                                                                                    <br></br>
+                                                                                </>
+                                                                            )}
+                                                                        </>
+                                                                    ))}
+                                                                    <br></br>
+                                                                    <Button variant="contained" style={{position: "absolute", right: "170px"}} onClick={() => setOpen(false)}>Cerrar</Button>
+                                                                    <br></br>
+                                                                    
+                                                                </Box>
+                                                            </Fade>
+                                                        </Modal>
+                                                    )}
+                                                </StyledTableRow>
+                                            ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                    
+                                    {
+                                        Object.values(inputRows).some((value) => value !== "") || Object.values(selectedRows).some((selected) => selected) //La segunda condición verifica si al menos 1 de los checkboxes han sido seleccionados
+                                        ? (
+                                            blockButton
+                                            ? (
+                                                <Button variant="contained" color="primary" disabled type="submit" onClick={handleSaveChanges} style={{margin:"20px"}}>
+                                                    Guardar
+                                                </Button>
+                                            )
+                                            : (
+                                                <Button variant="contained" color="primary" type="submit" onClick={handleSaveChanges} style={{margin:"20px"}}>
+                                                    Guardar
+                                                </Button>
+                                            )
+                                        )
+                                        : null
+                                    }  
+                                </div>
                             )
-                            : null
-                        }  
-                    </div>
+                        }
+                    </>
                 )
-            }
-            
+                : (
+                    <>
+                        <div style={{display: "flex", justifyContent: "center"}}>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row", borderRadius: "0.75rem", backgroundColor: "#000000", width: "230px", height: "42px"}}>
+                                <div style={{ backgroundColor: "#000000", borderRadius: "0.5rem", width: "112px", display: "flex", justifyContent: "center" }}>
+                                    <Button style={{ color: "#fff" }} onClick={() => setclickDebtorsButton(!clickDebtorsButton)}>Deudores</Button>
+                                </div>
+                                <div style={{ backgroundColor: "rgba(224, 224, 224, 1)", borderRadius: "0.5rem", width: "112px", display: "flex", justifyContent: "center" }}>
+                                    <Button style={{ color: "black" }} disabled>Todos</Button>
+                                </div>
+                            </div>
+                        </div>
+                        <br></br>
+                        <Sales />
+
+                    </>
+                ) 
+            } 
             {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
         </div>
         

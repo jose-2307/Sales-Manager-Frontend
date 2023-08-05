@@ -32,7 +32,7 @@ const Navbar = ({children}) => {
     return (
         <>
             <nav>
-                <ul>
+                <ul className="ul-nav">
                     <li><Link to={"/"} className="link">Home</Link></li>
                     <li><Link to={"/categories"} className="link">Productos</Link></li>
                     <li><Link to={"/customers"} className="link">Clientes</Link></li>
