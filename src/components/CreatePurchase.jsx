@@ -17,12 +17,16 @@ const validate = (values) => {
         errors.weight = "Requerido";
     } else if (values.weight <= 0) {
         errors.weight = "El valor debe ser positivo";
+    } else if (!Number.isInteger(values.weight)) {
+        errors.weight = "El valor debe ser un número entero";
     }
 
     if (!values.purchasePriceKilo) {
         errors.purchasePriceKilo = "Requerido";
     } else if (values.purchasePriceKilo <= 0) {
         errors.purchasePriceKilo = "El valor debe ser positivo";
+    } else if (!Number.isInteger(values.purchasePriceKilo)) {
+        errors.purchasePriceKilo = "El valor debe ser un número entero";
     }
 
     if (!values.purchaseDate) {

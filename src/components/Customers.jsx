@@ -93,7 +93,7 @@ const Customers = () => {
             </Link>
             <br></br>
             {customers.length === 0
-                ? <div>No hay clientes</div>
+                ? <h3>No hay clientes</h3>
                 : (
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
                         <TableContainer component={Paper} sx={{ maxHeight: 400, overflowY: "auto"}}>

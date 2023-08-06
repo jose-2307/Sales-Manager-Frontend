@@ -14,11 +14,12 @@ import { nameTransform } from "../utils/functions";
 
 const validate = (values) => {
     const errors = {};
-
     if (!values.salePriceKilo) {
         errors.salePriceKilo = "Requerido";
     } else if (values.salePriceKilo <= 0) {
         errors.salePriceKilo = "El valor debe ser positivo";
+    } else if (!Number.isInteger(values.salePriceKilo)) {
+        errors.salePriceKilo = "El valor debe ser un número entero";
     }
 
     return errors;

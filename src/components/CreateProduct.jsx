@@ -24,6 +24,8 @@ const validate = (values) => {
         errors.salePriceKilo = "Requerido";
     } else if (values.purchasePriceKilo <= 0) {
         errors.salePriceKilo = "El valor debe ser positivo";
+    } else if (!Number.isInteger(values.salePriceKilo)) {
+        errors.salePriceKilo = "El valor debe ser un número entero";
     }
 
 

@@ -1,4 +1,5 @@
 export const formatNumber = (num) => {
+    num = Math.round(num);
     let isNegative = false;
     if (num < 0) {
         isNegative = true;
@@ -17,7 +18,6 @@ export const formatNumber = (num) => {
             resp += (i - 1) >= 0 ? "." : "";
             cont = 0;
         }
-
     }
     resp = resp.split("").reverse().join("");
     if (isNegative) {

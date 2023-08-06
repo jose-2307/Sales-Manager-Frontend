@@ -7,21 +7,32 @@ nav {
     box-shadow: 0 2px 3px rgb(0,0,0,0.1);
 }
 
+
 .ul-nav {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 0;
     list-style: none;
     gap: 5px; /*Para establecer el espacio entre los elementos*/
 }
 
+.logo {
+    margin: 0;
+    padding: 0;
+    width: 24%;
+    height: inherit;
+}
 
-/* The dropdown container */
 .dropdown {
     float: left; /* Para que se muestre al lado */
     overflow: hidden;
+    /* display: flex;
+    align-items: center; */
+
 }
+
 
 /* Dropdown button */
 .dropdown .dropbtn {

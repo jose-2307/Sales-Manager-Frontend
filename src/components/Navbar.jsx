@@ -33,7 +33,9 @@ const Navbar = ({children}) => {
         <>
             <nav>
                 <ul className="ul-nav">
-                    <li><Link to={"/"} className="link">Home</Link></li>
+                    <li>
+                        <Link to={"/"} className="link"><img className="logo" src="../../icons/logo.png"/></Link>
+                    </li>
                     <li><Link to={"/categories"} className="link">Productos</Link></li>
                     <li><Link to={"/customers"} className="link">Clientes</Link></li>
                     <li><Link to={"/analysis"} className="link">Análisis</Link></li>
