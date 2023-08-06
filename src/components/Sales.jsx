@@ -11,6 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Backdrop, Box, Button, Fade, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
 import { dateTransform, formatNumber, nameTransform } from "../utils/functions";
+import Pagination from "./Pagination";
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -45,7 +46,9 @@ const Sales = () => {
     const [open, setOpen] = useState(false); //Controla el abrir y cerrar del modal
     const [year, setYear] = useState(""); //Controla el año seleccionado
     const [month, setMonth] = useState(""); //Controla el mes seleccionado
-
+    //Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [salesPerPage, setSalesPerPage] = useState(10);
 
     useEffect(() => {
         setLoading(true);
@@ -53,6 +56,7 @@ const Sales = () => {
         const fetchData = async () => {
             try {
                 const salesData = await getSalesBack();
+                salesData.sort((a,b) => a.name.localeCompare(b.name));
                 setSales(salesData);
                 const yearsData = await getYearsBack();
                 setYears(yearsData);
@@ -94,7 +98,8 @@ const Sales = () => {
         let errorOCurred = false;
         try {
             const salesData = await getSalesBack(year,event.target.value);
-            setSales(salesData);
+            salesData.sort((a,b) => a.name.localeCompare(b.name));
+            setSales(salesData);  
             setMonth(event.target.value);
         } catch (error) {
             console.log(error.message);
@@ -112,7 +117,11 @@ const Sales = () => {
         setLoading(false);
         setErrorMessage("");
     }
-    console.log(sales)
+
+    //Pagination
+    const lastProductIndex = currentPage * salesPerPage;
+    const firstProductIndex = lastProductIndex - salesPerPage;
+    const currentSales = sales.slice(firstProductIndex, lastProductIndex);
 
     return (
         <>
@@ -156,7 +165,7 @@ const Sales = () => {
                 ? <h3>No hay ventas registradas</h3>
                 : (
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-                        <TableContainer component={Paper} sx={{ maxHeight: 350, overflowY: "auto"}}>
+                        <TableContainer component={Paper} sx={{ maxHeight: 400, overflowY: "auto"}}>
                             <Table sx={{ minWidth: 700 }} aria-label="customized table">
                                 <TableHead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                                     <TableRow>
@@ -167,7 +176,7 @@ const Sales = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                {sales.map(row => (
+                                {currentSales.map(row => (
                                     <StyledTableRow key={row.id}>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.name}>{nameTransform(row.name)}</StyledTableCell>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.location}>{row.location ? row.location : "-"}</StyledTableCell>
@@ -295,7 +304,7 @@ const Sales = () => {
                     </div>
                 )
             }
-
+            <Pagination totalElements={sales.length} elementsPerPage={salesPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
             {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
         </>
     )

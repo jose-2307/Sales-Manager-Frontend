@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import Loader from './Loader';
 import { Link } from 'react-router-dom';
 import "./styles/Customers.css";
+import Pagination from "./Pagination.jsx";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -45,6 +46,9 @@ const Customers = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const customers = useSelector(state => state.customers);
     const dispatch = useDispatch();
+    //Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [customersPerPage, setCustomersPerPage] = useState(10);
 
     useEffect(() => {
         if (customers.length === 0) {
@@ -53,6 +57,7 @@ const Customers = () => {
             const fetchData = async () => {
                 try {
                     const data = await getCustomersBack();
+                    data.sort((a,b) => a.name.localeCompare(b.name));
                     data.forEach(x => {
                         dispatch(addCustomer(x));
                     });
@@ -75,6 +80,11 @@ const Customers = () => {
         setErrorMessage("");
     }
 
+    //Pagination
+    const lastProductIndex = currentPage * customersPerPage;
+    const firstProductIndex = lastProductIndex - customersPerPage;
+    const currentCustomers = customers.slice(firstProductIndex, lastProductIndex);
+
     return (
         <div style={{padding: "30px"}}>
             <h3>Clientes</h3>
@@ -86,7 +96,7 @@ const Customers = () => {
                 ? <div>No hay clientes</div>
                 : (
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-                        <TableContainer component={Paper} sx={{ maxHeight: 350, overflowY: "auto"}}>
+                        <TableContainer component={Paper} sx={{ maxHeight: 400, overflowY: "auto"}}>
                             <Table sx={{ minWidth: 700 }} aria-label="customized table">
                                 <TableHead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                                     <TableRow>
@@ -97,7 +107,7 @@ const Customers = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                {customers.map(row => (
+                                {currentCustomers.map(row => (
                                     <StyledTableRow key={row.id}>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.name}>{nameTransform(row.name)}</StyledTableCell>
                                         <StyledTableCell component="th" scope="row" align="center" key={row.email}>{row.email ? row.email : "-"}</StyledTableCell>
@@ -116,6 +126,7 @@ const Customers = () => {
                     </div>
                 )
             }
+            <Pagination totalElements={customers.length} elementsPerPage={customersPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
             {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
         </div>
     )

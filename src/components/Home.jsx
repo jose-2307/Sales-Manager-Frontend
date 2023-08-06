@@ -14,6 +14,7 @@ import { dateTransform, formatNumber, nameTransform } from '../utils/functions';
 import { Link } from 'react-router-dom';
 import "./styles/NewPurchaseOrder.css";
 import Sales from './Sales';
+import Pagination from './Pagination';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -53,6 +54,10 @@ const Home = () => {
     const [openDetailModal, setOpenDetailModal] = useState(null); //Controla que se abra el modal del deudor asociado
     const [open, setOpen] = useState(false); //Controla el abrir y cerrar del modal
     const [clickDebtorsButton, setclickDebtorsButton] = useState(true); //Controla la tabla que se muestra
+    //Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [debtorsPerPage, setDebtorsPerPage] = useState(10);
+
 
     useEffect(() => {
         setLoading(true);
@@ -257,6 +262,11 @@ const Home = () => {
         }
     };
 
+    //Pagination
+    const lastProductIndex = currentPage * debtorsPerPage;
+    const firstProductIndex = lastProductIndex - debtorsPerPage;
+    const currentDebtors = debtors.slice(firstProductIndex, lastProductIndex);
+
     return (
         <div style={{padding: "30px"}}>
             {clickDebtorsButton
@@ -281,7 +291,7 @@ const Home = () => {
                             ? <h3>No hay deudores</h3>
                             : (
                                 <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-                                    <TableContainer component={Paper}>
+                                    <TableContainer component={Paper} sx={{ maxHeight: 400, overflowY: "auto"}}>
                                         <Table sx={{ minWidth: 700 }} aria-label="customized table">
                                             <TableHead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                                                 <TableRow>
@@ -292,7 +302,7 @@ const Home = () => {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                            {debtors.map(row => (
+                                            {currentDebtors.map(row => (
                                                 <StyledTableRow key={row.id}>
                                                     <StyledTableCell component="th" scope="row" align="center" key={row.name}>{row.name}</StyledTableCell>
                                                     <StyledTableCell component="th" scope="row" align="center" key={row.location}>{row.location ? row.location : "-"}</StyledTableCell>
@@ -444,6 +454,7 @@ const Home = () => {
                                 </div>
                             )
                         }
+                        <Pagination totalElements={debtors.length} elementsPerPage={debtorsPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
                     </>
                 )
                 : (
@@ -464,6 +475,7 @@ const Home = () => {
                     </>
                 ) 
             } 
+            
             {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
         </div>
         

@@ -6,6 +6,8 @@ import "./styles/Products.css"
 import { useParams, Link } from "react-router-dom";
 import { Backdrop, Box, Button, Fade, Modal, Typography } from "@mui/material";
 import Loader from "./Loader";
+import Pagination from "./Pagination";
+import { formatNumber } from "../utils/functions";
 
 
 const Products = () => {
@@ -15,14 +17,12 @@ const Products = () => {
     const [count, setCount] = useState(0); //Controla la cantidad de productos encontrados
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-
-
-
     const dispatch = useDispatch();
     const { id = "" } = useParams();
+    //Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [productsPerPage, setProductsPerPage] = useState(4);
 
-    // const [messageVisible, setMessageVisible] = useState(false);
-    
 
     //Se utiliza para eliminar la data asociada a un producto cuando se cambia de categoría
     useEffect(() => {
@@ -37,6 +37,7 @@ const Products = () => {
         const fetchProducts = async () => {
             try {
                 const data = await getProductsBack(id);
+                data.sort((a,b) => a.name.localeCompare(b.name));
                 data.forEach(x => {
                     dispatch(addProduct(x));
                 });
@@ -80,6 +81,11 @@ const Products = () => {
         setErrorMessage("");
     }
 
+    //Pagination
+    const lastProductIndex = currentPage * productsPerPage;
+    const firstProductIndex = lastProductIndex - productsPerPage;
+    const currentProducts = products.slice(firstProductIndex, lastProductIndex);
+
     if (!products) return <></>
     return (
         <section>
@@ -88,10 +94,10 @@ const Products = () => {
                 <div className="container-products">
                     <Link className="createProduct" to={`/categories/${id}/create-product`}>Crear producto<img src="../../icons/crear.png"/></Link>
                     <p className="countProducts"><b>{count}</b> productos</p>
-                    {products.length === 0 
+                    {currentProducts.length === 0 
                     ? <h3>No hay productos</h3>
                     :
-                        products.map(p => 
+                    currentProducts.map(p => 
                             <div className="container-product" key={p.id}>
                                 <img className="img-product" alt={p.name} 
                                 src={p.images.length === 0 ? "../../categories/frutos-secos.jpg" : p.images[0].url} 
@@ -101,10 +107,10 @@ const Products = () => {
                                         {p.name[0].toUpperCase().concat(p.name.slice(1))}
                                     </h3>
                                     {p.weight < 1000 
-                                        ? <p>Stock: <b style={{color:"red"}}>{`${p.weight} g`}</b></p> 
-                                        : <p>Stock: <b>{`${p.weight} g`}</b></p>
+                                        ? <p>Stock: <b style={{color:"red"}}>{`${formatNumber(p.weight)} g`}</b></p> 
+                                        : <p>Stock: <b>{`${formatNumber(p.weight)} g`}</b></p>
                                     } 
-                                    <p>{`Precio por kilo: $ ${p.salePriceKilo}`}</p>
+                                    <p>{`Precio por kilo: $ ${formatNumber(p.salePriceKilo)}`}</p>
                                 </section>    
                                 <section className="manage-product">
                                     <div className="icons-center">
@@ -159,6 +165,8 @@ const Products = () => {
                     }
                 </div>
             </div>
+            <Pagination totalElements={products.length} elementsPerPage={productsPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
+            <br></br>
         </section>
     )
 }
