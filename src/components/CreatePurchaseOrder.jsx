@@ -33,14 +33,16 @@ const CreatePurchaseOrder = () => {
         let categoriesData = await getCategories();
 
         const newCategoriesData = [];
+        let totalProducts = [];
         for (let category of categoriesData) {
           let productsData = await getProductsBack(category.id);
-          productsData = sortArray(productsData);
           if (productsData.length !== 0) {
-            setProducts(productsData);
+            totalProducts.push(...productsData);
             newCategoriesData.push(category);
           }
         }
+        totalProducts = sortArray(totalProducts);
+        setProducts(totalProducts);
         categoriesData = sortArray(newCategoriesData);
         setCategories(categoriesData);
         setCustomers(customersData);

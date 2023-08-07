@@ -86,6 +86,7 @@ const Products = () => {
     const firstProductIndex = lastProductIndex - productsPerPage;
     const currentProducts = products.slice(firstProductIndex, lastProductIndex);
 
+
     if (!products) return <></>
     return (
         <section>
@@ -100,7 +101,7 @@ const Products = () => {
                     currentProducts.map(p => 
                             <div className="container-product" key={p.id}>
                                 <img className="img-product" alt={p.name} 
-                                src={p.images.length === 0 ? "../../categories/frutos-secos.jpg" : p.images[0].url} 
+                                src={p.images.length === 0 ? "http://res.cloudinary.com/dmevmh3ch/image/upload/v1685639993/m90r4s6zt6ooxb5jovpl.png" : p.images[0].url} 
                                 width="50%" height="32%" />
                                 <section className="product-info">
                                     <h3 className="product-title">

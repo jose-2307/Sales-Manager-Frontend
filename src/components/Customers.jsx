@@ -87,7 +87,7 @@ const Customers = () => {
 
     return (
         <div style={{padding: "30px"}}>
-            <h3>Clientes</h3>
+            <h2>Clientes</h2>
             <Link className="customerButton" to="create-customer">
                 Registrar cliente<img src="../../icons/agregar-usuario.png"/>
             </Link>

@@ -84,7 +84,7 @@ const EditProduct = () => {
                         <CardMedia 
                             component="img"
                             alt={product.name}
-                            height="140"
+                            style={{ maxHeight: "220px" }}
                             image={product.images.length === 0 ? "http://res.cloudinary.com/dmevmh3ch/image/upload/v1685639993/m90r4s6zt6ooxb5jovpl.png" : product.images[0].url}
                         />
                         <CardContent>

@@ -64,7 +64,7 @@ const Login = () => {
                 sm={4}
                 md={7}
                 sx={{
-                    backgroundImage: "url(../../categories/frutos-secos.jpg)",
+                    backgroundImage: "url(http://res.cloudinary.com/dmevmh3ch/image/upload/v1691380304/rszej46nd6ncvd8dnycf.jpg)",
                     backgroundRepeat: "no-repeat",
                     backgroundColor: (t) =>
                     t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900],
@@ -73,11 +73,6 @@ const Login = () => {
                 }}
                 >
 
-                    {/* <Typography variant="h2" color={"black"}>
-                        Sales Manager
-                    </Typography> */}
-              
-                
                 </Grid>
                 
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
@@ -113,17 +108,17 @@ const Login = () => {
                             </Button>
                         </Form>
                     </Formik>
-                    <Grid container>
-                        <Grid item xs>
-                        <Link to="/recovery-password" variant="body2">
-                            Recuperar contraseña
-                        </Link>
-                        </Grid>
-                        <Grid item>
-                        <Link to="/sign-up" variant="body2">
-                            Crear cuenta
-                        </Link>
-                        </Grid>
+                    <Grid container style={{display: "flex", justifyContent: "space-between" }}>
+                        <div style={{paddingLeft: "6%"}}>
+                            <Link to="/recovery-password" variant="body2">
+                                Recuperar contraseña
+                            </Link>
+                        </div>
+                        <div style={{paddingRight: "6%"}}>
+                            <Link to="/sign-up" variant="body2">
+                                Crear cuenta
+                            </Link>
+                        </div>
                     </Grid>
                     {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}
 

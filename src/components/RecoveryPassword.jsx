@@ -49,7 +49,7 @@ const RecoveryPassword = () => {
                 sm={4}
                 md={7}
                 sx={{
-                    backgroundImage: "url(../../categories/frutos-secos.jpg)",
+                    backgroundImage: "url(http://res.cloudinary.com/dmevmh3ch/image/upload/v1691380304/rszej46nd6ncvd8dnycf.jpg)",
                     backgroundRepeat: "no-repeat",
                     backgroundColor: (t) =>
                     t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900],

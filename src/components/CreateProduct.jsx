@@ -71,13 +71,11 @@ const CreateProduct = () => {
 
     return (
         <>          
-            <div style={{display: "grid", placeItems: "center"}}>
+            <div style={{display: "grid", placeItems: "center", height: "90vh"}}>
                 <Card sx={{ maxWidth: 345 }}>
                     <CardMedia 
                         component="img"
-                        // alt={product.name}
                         height="140"
-                        // image={product.images[0]}
                         image="../../../categories/frutos-secos.jpg"
                     />
                     <CardContent>

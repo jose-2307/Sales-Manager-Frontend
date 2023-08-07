@@ -262,6 +262,7 @@ const Home = () => {
         }
     };
 
+
     //Pagination
     const lastProductIndex = currentPage * debtorsPerPage;
     const firstProductIndex = lastProductIndex - debtorsPerPage;
@@ -385,10 +386,10 @@ const Home = () => {
                                                                                     backgroundColor: "#f2f2f2" 
                                                                                     
                                                                                 }}>
-                                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px" }} >
+                                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingLeft:"8px" }} key={Math.random()}>
                                                                                         {`${p.productName[0].toUpperCase().concat(p.productName.slice(1))} `} {`(${formatNumber(p.weight)} g)`}
                                                                                     </Typography>
-                                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} >{`$ ${formatNumber(parseInt(p.weight) * parseInt(p.priceKilo)/1000)}`}</Typography>
+                                                                                    <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }}key={Math.random()} >{`$ ${formatNumber(parseInt(p.weight) * parseInt(p.priceKilo)/1000)}`}</Typography>
                                                                                 </section>
                                                                             ))}
                                                                             {order.subscriber != 0 && (
@@ -403,7 +404,7 @@ const Home = () => {
                                                                                     <Typography id="transition-modal-description" sx={{ mt: 2, paddingRight:"8px" }} key={order.subscriber}>{`$ ${formatNumber(order.subscriber)}`}</Typography>
                                                                                 </section>
                                                                             )}
-                                                                            <section style={{
+                                                                            <section key={Math.random()} style={{
                                                                                 display: "flex",
                                                                                 flexDirection: "row",
                                                                                 justifyContent: "space-between",

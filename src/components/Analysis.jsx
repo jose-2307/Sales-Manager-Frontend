@@ -14,6 +14,7 @@ import { Bar, Line } from "react-chartjs-2";
 import Loader from "./Loader";
 import { getAnnualBalanceBack, getIncomeBack, getInvestmentBack, getSalesByProductBack } from "../services/analysis.service";
 import { formatNumber, nameTransform } from "../utils/functions";
+import "./styles/Analysis.css";
 
 ChartJS.register(
     CategoryScale,
@@ -154,8 +155,8 @@ const Analysis = () => {
     return (
         <>
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "90vh" }}>  
-                <h1 style={{ fontSize: "30px", margin: 0}}>Análisis de Ventas</h1>
-                <section style={{ display: "flex", flexDirection: "row"}}>
+                <h2 className="analysis-title" style={{ fontSize: "26px", margin: 0}}>Análisis de Ventas</h2>
+                <section className="kpis" style={{ display: "flex", flexDirection: "row"}}>
                     <div style={{ width: "220px",display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "120px", margin: "20px 10px", backgroundColor: "#fff", borderRadius: "4px", boxShadow: "1px 2px 5px rgba(0, 0, 0, 0.1)" }}>
                         <h5 style={{paddingTop: "20px", margin: 0}}>Inversión {months[currentMonth]} {currentYear}</h5>
                         <h1>$ {formatNumber(investment)}</h1>
@@ -169,7 +170,7 @@ const Analysis = () => {
                         <h1>$ {formatNumber(income - investment)}</h1>
                     </div>
                 </section>
-                <section style={{ display: "flex", flexDirection: "row" }}>
+                <section className="graphs" style={{ display: "flex", flexDirection: "row" }}>
                     <div style={{width: "620px", height: "310px", backgroundColor: "#fff", margin: "20px 10px",  borderRadius: "4px", transition: "box-shadow 0.2s ease", boxShadow: "1px 2px 5px rgba(0, 0, 0, 0.1)"}}>
                         <Bar data={salesProductdata} options={salesProductOptions}/>
                     </div>
