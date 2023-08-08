@@ -9,7 +9,6 @@ import { formatNumber, nameTransform, sortArray } from "../utils/functions";
 import "./styles/NewPurchaseOrder.css";
 
 
-
 const CreatePurchaseOrder = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -29,7 +28,7 @@ const CreatePurchaseOrder = () => {
     const fetchData = async () => {
       try {
         let customersData = await getCustomersBack();
-        customersData = sortArray(customersData);
+        customersData.sort((a,b) => a["name"].localeCompare(b["name"]));
         let categoriesData = await getCategories();
 
         const newCategoriesData = [];
@@ -239,12 +238,13 @@ const CreatePurchaseOrder = () => {
     setProductRows(newProductRows);
   }
 
+
   return (
     <div style={{display: "grid", placeItems: "center", height: "90vh"}}>
       {customers.length === 0 ? (
-        <div style={{ display: "grid", placeItems: "center" }}>
-          No hay clientes registrados.
-        </div>
+        <h2 style={{ display: "grid", placeItems: "center" }}>
+          No hay clientes registrados
+        </h2>
       ) : (
         <div style={{ display: "grid", placeItems: "center" }}>
           <Card sx={{ maxWidth: 420, maxHeight: 480, overflowY: "auto" }}>
@@ -261,7 +261,12 @@ const CreatePurchaseOrder = () => {
                       htmlFor="uncontrolled-native"
                       sx={{ fontSize: "12px", width: "30ch" }}
                       >Cliente</InputLabel>
-                      <NativeSelect name="customers" label="Cliente" sx={{ width: "16ch" }} required>
+                      <NativeSelect 
+                        name="customers" 
+                        label="Cliente" 
+                        sx={{ width: "16ch" }} 
+                        required
+                      >
                         <option value="" style={{ fontSize: "14px" }}></option>
                         {customers.map((customer) => (
                           <option

@@ -35,8 +35,7 @@ const ChangePassword = () => {
         let errorOCurred = false;
         try {
             const token = query.get("token");
-            const changePassword = await changePasswordBack(token, values.password);
-            console.log(changePassword);
+            await changePasswordBack(token, values.password);
             setRecovery(true);
 
         } catch (error) {

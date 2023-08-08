@@ -18,8 +18,7 @@ const RecoveryPassword = () => {
         setLoading(true);
         let errorOCurred = false;
         try {
-            const recovery = await recoveryPasswordBack(values.email);
-            console.log(recovery);
+            await recoveryPasswordBack(values.email);
             setEmail(values.email);
 
         } catch (error) {

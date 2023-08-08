@@ -7,7 +7,6 @@ const UploadImage = () => {
 
     const submit = async () => {
         const img = await submitImage(image);
-        // console.log(img)
         setImage({ url: img.url, name: img.original_filename });
     }
     console.log(image);

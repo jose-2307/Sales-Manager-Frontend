@@ -7,7 +7,6 @@ nav {
     box-shadow: 0 2px 3px rgb(0,0,0,0.1);
 }
 
-
 .ul-nav {
     width: 100%;
     display: flex;
@@ -92,6 +91,10 @@ nav {
     display: block;
     text-align: left;
     cursor: pointer;
+}
+
+.logout {
+    border-top: 1px solid rgb(233, 227, 227);
 }
 
 .dropdown-content a:hover {

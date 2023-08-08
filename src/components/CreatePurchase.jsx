@@ -29,10 +29,18 @@ const validate = (values) => {
         errors.purchasePriceKilo = "El valor debe ser un número entero";
     }
 
+    
+
     if (!values.purchaseDate) {
         errors.purchaseDate = "Requerido";
     } else if (new Date(values.purchaseDate) <= new Date("01-01-2022")) {
         errors.purchaseDate = "La fecha debe ser mayor";
+    } else {
+        const [year, month, day] = values.purchaseDate.split('-');//Para obtener la fecha correcta debido al GMT-4 o GMT-3
+        const selectedDate = new Date(year, month - 1, day); 
+        if (selectedDate > new Date()) {
+            errors.purchaseDate = "La fecha no debe ser mayor a la fecha actual.";
+        }
     }
 
 

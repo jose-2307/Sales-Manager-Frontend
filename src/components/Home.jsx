@@ -191,12 +191,10 @@ const Home = () => {
                     const fecha = new Date();
                     if ("check" in f) { //Se borra el deudor
                         //Se paga completo
-                        console.log("Se paga completo")
                         await updateDebtorsBack(f.id, p.id, { paymentDate: fecha, paidOut: true });
                         setDebtors(prevDebtors => prevDebtors.filter(debtor => debtor.id != f.id));
                     } else {
                         if (p.orderDebt <= accum) { //Se borra la orden de compra del deudor
-                            console.log("Queda pagada la orden de compra")
                             await updateDebtorsBack(f.id, p.id, { paymentDate: fecha, paidOut: true });
                             let orderDebt;
                             const updateDebtors = debtors.map(debtor => {
@@ -212,13 +210,9 @@ const Home = () => {
                                 }
                                 return debtor;
                             });
-                            console.log(updateDebtors);
                             setDebtors(updateDebtors);
-                            console.log(debtors);
                             accum -= p.orderDebt;
                         } else { //Se actualiza el subscriber de la orden de compra del deudor
-                            console.log("Queda como abono");
-                            console.log(debtors);
                             
                             await updateDebtorsBack(f.id, p.id, { subscriber: accum });
                             const updateDebtors = debtors.map(debtor => {
@@ -240,7 +234,6 @@ const Home = () => {
                             accum = 0;
                         }
                         if (accum === 0) {
-                            console.log("Abono pagado")
                             break;
                         }
                     }

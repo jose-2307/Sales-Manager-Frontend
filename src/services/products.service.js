@@ -60,10 +60,18 @@ export const patchProductBack = async (productId, {salePriceKilo, urls}) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            salePriceKilo,
-            urls,
-        }),
+        body: urls.length !== 0 
+            ?  (
+                JSON.stringify({
+                salePriceKilo,
+                urls,
+                })
+            )
+            : (
+                JSON.stringify({
+                salePriceKilo,
+                })
+            ),
     });
     if (response.ok) {
         return response.json();

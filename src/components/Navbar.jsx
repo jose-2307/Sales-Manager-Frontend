@@ -50,11 +50,10 @@ const Navbar = ({children}) => {
                             </button>
                             <div className="dropdown-content">
                                 <Link to={"/account"}>Modificar cuenta</Link>
-                                <a onClick={logout}>Cerrar sesión</a>
+                                <a onClick={logout} className="logout">Cerrar sesión</a>
                             </div>
                         </div>
                     </div>
-                    
                 </ul>
             </nav>
             {loading && (<Loader error={errorMessage} closeErrorModal={closeErrorModal}></Loader>)}

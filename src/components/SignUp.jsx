@@ -44,8 +44,7 @@ const SignUp = () => {
         setLoading(true);
         let errorOCurred = false;
         try {
-            const singUp = await singUpBack({name: values.name, lastName: values.lastName, email: values.email, password: values.password});
-            console.log(singUp);
+            await singUpBack({name: values.name, lastName: values.lastName, email: values.email, password: values.password});
             navigate("/login");
 
         } catch (error) {

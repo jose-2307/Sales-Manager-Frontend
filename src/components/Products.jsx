@@ -26,7 +26,6 @@ const Products = () => {
 
     //Se utiliza para eliminar la data asociada a un producto cuando se cambia de categoría
     useEffect(() => {
-        // if (products[0] != undefined && id == products[0].id) {console.log("Repetido")}
         dispatch(deleteProducts());
     }, []);
 

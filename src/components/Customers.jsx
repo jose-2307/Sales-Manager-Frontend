@@ -57,7 +57,7 @@ const Customers = () => {
             const fetchData = async () => {
                 try {
                     const data = await getCustomersBack();
-                    data.sort((a,b) => a.name.localeCompare(b.name));
+                    data.sort((a,b) => a["name"].localeCompare(b["name"]));
                     data.forEach(x => {
                         dispatch(addCustomer(x));
                     });
