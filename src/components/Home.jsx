@@ -65,6 +65,11 @@ const Home = () => {
         const fetchDebtors = async () => {
             try {
                 const data = await getDebtorsBack();
+                data.sort((a, b) => { //Ordena los deudores 
+                    const aFirstOrderId = a.purchaseOrders.length > 0 ? a.purchaseOrders[0].id : Number.MAX_SAFE_INTEGER;
+                    const bFirstOrderId = b.purchaseOrders.length > 0 ? b.purchaseOrders[0].id : Number.MAX_SAFE_INTEGER;
+                    return bFirstOrderId - aFirstOrderId;
+                });
                 for (let element of data) {
                     element.name = nameTransform(element.name);
                     element.purchaseOrders.sort((a,b) => a.id - b.id); //Ordena las órdenes de compra según su id
