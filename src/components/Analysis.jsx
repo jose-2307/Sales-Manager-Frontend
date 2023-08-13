@@ -98,7 +98,7 @@ const Analysis = () => {
           },
           title: {
             display: true,
-            text: 'Cantidad de Ventas por Producto',
+            text: 'Cantidad Vendida por Producto (gramos)',
             font: {
                 size: 14,
                 color: "black"
@@ -131,7 +131,7 @@ const Analysis = () => {
                 label: `${months[currentMonth]} ${currentYear}`,
                 backgroundColor: "rgb(255, 99, 132)",
                 borderColor: "rgb(255, 99, 132)",
-                data: salesProduct.map(x => x.count),
+                data: salesProduct.map(x => x.weight),
             },
         ],
     };
