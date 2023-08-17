@@ -247,7 +247,7 @@ const CreatePurchaseOrder = () => {
         </h2>
       ) : (
         <div style={{ display: "grid", placeItems: "center" }}>
-          <Card sx={{ maxWidth: 420, maxHeight: 480, overflowY: "auto" }}>
+          <Card sx={{ maxWidth: 420, maxHeight: 480, overflowY: "auto", scrollbarGutter: "stable" }}> {/** scrollbarGutter evita que se desplace el contenido al aparecer la barra */}
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
                 Registrar venta

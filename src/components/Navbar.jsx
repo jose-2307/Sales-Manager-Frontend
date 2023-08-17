@@ -9,6 +9,11 @@ import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 const Navbar = ({children}) => {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [sideMenuActive, setSideMenuActive] = useState(false);
+
+    const toggleSideMenu = () => {
+        setSideMenuActive(!sideMenuActive);
+    };
 
     const logout = async () => {
         setLoading(true);
@@ -34,10 +39,13 @@ const Navbar = ({children}) => {
     return (
         <>
             <nav>
-                <ul className="ul-nav">
+                <div className={`mobile-menu-button ${sideMenuActive ? 'active' : ''}`} onClick={toggleSideMenu}>
+                    &#9776;
+                </div>
+                <ul className={`ul-nav ${sideMenuActive ? 'side-menu-active' : ''}`}>
                     <div>
                         <li>
-                            <Link to={"/"} className="home-link"><img className="logo" src="../../icons/logo.png" alt="logo"/> <span className="sm">Sales Manager</span></Link>
+                            <Link to={"/"} className="home-link"><img className="logo" src="../../icons/logo.png" alt="logo"/><span className="sm">Sales Manager</span></Link>
                         </li>
                     </div>
                     <div className="lis-nav">

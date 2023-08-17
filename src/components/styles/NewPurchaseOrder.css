@@ -1,3 +1,7 @@
+.home-container {
+  padding: 30px; 
+  position: relative;
+}
 /* Botón para acceder al formulario */
 
 .purchaseOrderButton {
@@ -100,5 +104,21 @@
   .purchaseOrderButton {
     width: 7%;
     top: 94%;
+  }
+}
+
+
+@media (max-width: 600px) { /*Pantalla celular*/
+  .purchaseOrderButton {
+    width: 38%;
+    padding: 2% 1.8%;
+    top: 98%;
+  }
+}
+
+@media (max-height: 400px) { /*Pantalla celular horizontal*/
+  .purchaseOrderButton {
+    width: 16%;
+    padding: 0.8% 1.4%;
   }
 }

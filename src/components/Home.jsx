@@ -267,7 +267,7 @@ const Home = () => {
     const currentDebtors = debtors.slice(firstProductIndex, lastProductIndex);
 
     return (
-        <div style={{padding: "30px"}}>
+        <div className="home-container">
             {clickDebtorsButton
                 ? (
                     <>
@@ -282,9 +282,6 @@ const Home = () => {
                             </div>
                         </div>
                         <br></br>
-                        <Link className="purchaseOrderButton" to="/create-purchase-order">
-                            Registrar venta<img src="../../icons/registrar.png"/>
-                        </Link>
                         <br></br>
                         {debtors.length === 0 
                             ? <h3>No hay deudores</h3>
@@ -454,6 +451,9 @@ const Home = () => {
                             )
                         }
                         <Pagination totalElements={debtors.length} elementsPerPage={debtorsPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
+                        <Link className="purchaseOrderButton" to="/create-purchase-order">
+                            Registrar venta<img src="../../icons/registrar.png"/>
+                        </Link>
                     </>
                 )
                 : (
