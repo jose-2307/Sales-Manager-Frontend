@@ -90,7 +90,6 @@ const Sales = () => {
                 setLoading(false);
             }
         }
-        
     };
 
     const handleMonthChange = async (event) => {
@@ -110,7 +109,6 @@ const Sales = () => {
                 setLoading(false);
             }
         }
-        
     };
 
     const closeErrorModal = () => { //Cierra el modal en caso de dar click en el botón de cerrar

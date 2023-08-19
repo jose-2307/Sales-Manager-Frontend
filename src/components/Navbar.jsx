@@ -42,6 +42,10 @@ const Navbar = ({children}) => {
                 <div className={`mobile-menu-button ${sideMenuActive ? 'active' : ''}`} onClick={toggleSideMenu}>
                     &#9776;
                 </div>
+                <ul className={`side-menu${sideMenuActive ? '-active' : ''}`}>
+                    {/* Contenido del menú */}
+                    <li>a</li>
+                </ul>
                 <ul className={`ul-nav ${sideMenuActive ? 'side-menu-active' : ''}`}>
                     <div>
                         <li>
